@@ -1,0 +1,13 @@
+.DS_Store
+bin/
+obj/
+lib/
+.tmp/
+autom4te.cache/
+config.log
+config.status
+configure
+*.so
+*.dSYM
+*.dylib
+*.o
