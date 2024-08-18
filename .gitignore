@@ -11,3 +11,4 @@ configure
 *.dSYM
 *.dylib
 *.o
+Makefile
