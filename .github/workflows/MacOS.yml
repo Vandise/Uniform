@@ -1,0 +1,30 @@
+name: MacOS
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: macos-13
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Compiler version
+      run: gcc -v
+
+    - name: Install autotools
+      run: brew install autoconf automake libtool binutils
+
+    - name: autoconf
+      run: autoconf
+
+    - name: configure
+      run: sudo ./configure
+
+    - name: make scanner
+      run: make scanner
+
+    - name: run tests
+      run: |
+        export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+        export DYLD_FALLBACK_LIBRARY_PATH=$DYLD_FALLBACK_LIBRARY_PATH:/usr/local/lib
+        ./bin/scanner_tests
