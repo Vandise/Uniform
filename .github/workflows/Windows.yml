@@ -1,0 +1,87 @@
+name: Windows
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Print Search Paths
+      run: echo $env:Path
+
+    - name: Install MSYS2
+      run: choco install msys2
+
+    - name: Build and install tools
+      run: C:\tools\msys64\usr\bin\bash -lc "pacman -Sy autoconf make gcc git automake libtool --noconfirm"
+      env:
+        HOME: ${{ runner.workspace }}/uniform
+        MINGW_INSTALLS: ${{ matrix.task.installs }}
+        CI: true
+
+    - name: Check uname
+      run: C:\tools\msys64\usr\bin\bash -lc "uname"
+      env:
+        HOME: ${{ runner.workspace }}/uniform
+        MINGW_INSTALLS: ${{ matrix.task.installs }}
+        CI: true
+
+    - name: Print GCC Information
+      run: C:\tools\msys64\usr\bin\bash -lc "echo | gcc -E -Wp,-v -"
+      env:
+        HOME: ${{ runner.workspace }}/uniform
+        MINGW_INSTALLS: ${{ matrix.task.installs }}
+        CI: true
+
+    - name: Print PATH Information
+      run: C:\tools\msys64\usr\bin\bash -lc "echo | gcc -E -Wp,-v -"
+      env:
+        HOME: ${{ runner.workspace }}/uniform
+        MINGW_INSTALLS: ${{ matrix.task.installs }}
+        CI: true
+
+    - name: Autoconf
+      run: C:\tools\msys64\usr\bin\bash -lc "autoconf"
+      env:
+        HOME: ${{ runner.workspace }}/uniform
+        MINGW_INSTALLS: ${{ matrix.task.installs }}
+        CI: true
+
+    - name: Configure
+      run: C:\tools\msys64\usr\bin\bash -lc "./configure"
+      env:
+        HOME: ${{ runner.workspace }}/uniform
+        MINGW_INSTALLS: ${{ matrix.task.installs }}
+        CI: true
+
+    - name: make scanner
+      run: C:\tools\msys64\usr\bin\bash -lc "make scanner"
+      env:
+        HOME: ${{ runner.workspace }}/uniform
+        MINGW_INSTALLS: ${{ matrix.task.installs }}
+        CI: true
+
+    - name: Debug Binary
+      run: C:\tools\msys64\usr\bin\bash -lc "ldd ./bin/scanner_tests.exe"
+      env:
+        HOME: ${{ runner.workspace }}/uniform
+        MINGW_INSTALLS: ${{ matrix.task.installs }}
+        CI: true
+
+    - name: Run Tests
+      run: ./bin/scanner_tests.exe
+      continue-on-error: true
+      env:
+        HOME: ${{ runner.workspace }}/uniform
+        MINGW_INSTALLS: ${{ matrix.task.installs }}
+        CI: true
+
+    - name: Dump StackTrace
+      run: C:\tools\msys64\usr\bin\bash -lc "cat scanner_tests.exe.stackdump"
+      continue-on-error: true
+      env:
+        HOME: ${{ runner.workspace }}/uniform
+        MINGW_INSTALLS: ${{ matrix.task.installs }}
+        CI: true
