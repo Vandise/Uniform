@@ -1,0 +1,25 @@
+name: Ubuntu
+
+on: [push,workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Compiler version
+      run: gcc -v
+
+    - name: autoconf
+      run: autoconf
+
+    - name: configure
+      run: sudo ./configure
+
+    - name: make scanner
+      run: make scanner
+
+    - name: run tests
+      run: |
+        ./bin/scanner_tests
