@@ -1,0 +1,4 @@
+#ifndef __UNIFORM_SCANNER_SHAREDH
+#define __UNIFORM_SCANNER_SHAREDH 1
+
+#endif
