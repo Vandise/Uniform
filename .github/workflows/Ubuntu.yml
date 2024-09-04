@@ -18,7 +18,7 @@ jobs:
       run: sudo ./configure
 
     - name: make scanner
-      run: make scanner
+      run: sudo make scanner
 
     - name: run tests
       run: |
