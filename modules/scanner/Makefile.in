@@ -17,11 +17,15 @@ ifeq ($(UNAME), Darwin)
   SCANNER_LIB_NAME := lib/uniformscanner.$(LIBEXT).$(SCANNER_MAJOR_VERSION).$(SCANNER_MINOR_VERSION).$(SCANNER_MAINT_VERSION)
 endif
 
-scanner: scanner_module scanner_library scanner_tests scanner_install
+scanner: scanner_mkdir scanner_add_headers scanner_module scanner_library scanner_tests scanner_install
+
+scanner_mkdir:
+	mkdir -p $(SYSINCDIR)/uniform/scanner
+
+scanner_add_headers:
+	cp $(SCANNER_HEADERS) $(SYSINCDIR)/uniform/scanner
 
 scanner_install:
-	mkdir -p $(SYSINCDIR)/uniform/scanner
-	cp $(SCANNER_HEADERS) $(SYSINCDIR)/uniform/scanner
 	cp $(SCANNER_LIB_NAME) $(SYSLIBDIR)
 
 scanner_module: $(SCANNER_OBJECTS)
