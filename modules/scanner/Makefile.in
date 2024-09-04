@@ -37,7 +37,7 @@ scanner_library:
 	$(CC) $(SHAREDFLAG) $(SCANNER_OBJECTS) -o $(SCANNER_LIB_NAME)
 
 scanner_tests: $(SCANNER_TEST_OBJECTS)
-	$(CC) $(CFLAGS) $(ADDFLAGS) -o bin/scanner_tests $(SCANNER_TEST_OBJECTS) -lawry
+	$(CC) $(CFLAGS) $(ADDFLAGS) -o bin/scanner_tests $(SCANNER_OBJECTS) $(SCANNER_TEST_OBJECTS) -lawry
 
 $(SCANNER_TEST_OBJECTS): $(SCANNER_TEST_FILES)
 	$(CC) $(CFLAGS) $(ADDFLAGS) -c $< -o $@
