@@ -24,38 +24,44 @@ describe("Scanner Test Suite", scanner_test_suite)
     end
 
     when("A file is found")
-      UniformScanner *scanner = subject();
-
       it("Sets the current character to a null terminator")
+        UniformScanner *scanner = subject();
         expect(scanner->current_char) to equal('\0')
       end
 
       it("Sets the source name to the file name")
+        UniformScanner *scanner = subject();
         expect(scanner->source_name) to equal("modules/scanner/test/files/tokens.u")
       end
 
       it("Sets the source buffer to an empty string")
+        UniformScanner *scanner = subject();
         expect(scanner->source_buffer) to equal("")
       end
 
       it("Sets the line number to 0")
+        UniformScanner *scanner = subject();
         expect(scanner->line_number) to equal(0)
       end
 
       it("Sets the level to 0")
+        UniformScanner *scanner = subject();
         expect(scanner->level) to equal(0)
       end
 
       it("Sets the buffer offset to 0")
+        UniformScanner *scanner = subject();
         expect(scanner->buffer_offset) to equal(0)
       end
 
       it("Sets the source buffer pointer to the source buffer")
+        UniformScanner *scanner = subject();
         // Test pending character reading
         //expect(scanner->source_bufferp) to equal(scanner->source_buffer)
       end
 
       it("Sets the scanner's errored status to 0")
+        UniformScanner *scanner = subject();
         expect(scanner->errored) to equal(0)
       end
     end
