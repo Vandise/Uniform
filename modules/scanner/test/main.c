@@ -64,8 +64,17 @@ describe("Scanner Test Suite", scanner_test_suite)
         UniformScanner *scanner = subject();
         expect(scanner->errored) to equal(0)
       end
+
+      it("Sets all characters in the char table to UNDEFINED_CHAR_CODE")
+        UniformScanner *scanner = subject();
+        for (int ch = 0; ch < 256; ++ch) {
+          expect(scanner->char_table[ch]) to equal(UNDEFINED_CHAR_CODE);
+        }
+      end
     end
   end
+
+
 end
 
 int main(void) {

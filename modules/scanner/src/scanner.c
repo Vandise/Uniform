@@ -29,6 +29,10 @@ static UniformScanner* init(const char *file_name) {
     scanner->errored = 1;
   }
 
+  for (int ch = 0; ch < 256; ++ch) {
+    scanner->char_table[ch] = UNDEFINED_CHAR_CODE;
+  }
+
   return scanner;
 }
 
