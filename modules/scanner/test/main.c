@@ -18,7 +18,7 @@ describe("Scanner Test Suite", scanner_test_suite)
   context(".init")
     when("A file is not found")
       it("Sets the scanner's errored status to 1")
-        UniformScanner *scanner = UniformScannerModule.init("modules/scanner/test/files/notfound.u"); 
+        UniformScanner *scanner = UniformScannerModule.init("notfound.u"); 
         expect(scanner->errored) to equal(1)
       end
     end
@@ -74,6 +74,16 @@ describe("Scanner Test Suite", scanner_test_suite)
     end
   end
 
+  context(".get_token")
+    when("A file is found")
+      it("extracts the token")
+        UniformScanner *scanner = subject();
+        UniformScannerModule.get_token(scanner);
+
+        expect(scanner->current_token.code) to equal(T_MACRO)
+      end
+    end
+  end
 
 end
 

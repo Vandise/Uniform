@@ -10,6 +10,17 @@
 #define NEWLINE_CHAR '\n'
 #define COMMENT_CHAR '#'
 #define UNIFORM_SCANNER_VERSION 100
+#define UNIFORM_SCANNER_MAX_SOURCE_LINE 1024
+
+typedef enum {
+  I_32LIT, I_64LIT, F_32LIT, F_64LIT, STRING_LIT,
+} UNIFORM_LITERAL;
+
+typedef enum {
+  UNDEFINED_TOKEN, T_ERROR, T_NEWLINE, T_END_OF_FILE,
+  T_MACRO, T_IDENTIFIER, T_STRING,
+  T_LPAREN, T_RPAREN
+} UNIFORM_TOKEN_CODE;
 
 typedef enum {
   UNDEFINED_CHAR_CODE,
@@ -22,7 +33,32 @@ typedef enum {
   SPECIAL_CHAR_CODE,
   NEWLINE_CHAR_CODE,
   EOF_CHAR_CODE
-} CHAR_CODE;
+} UNIFORM_CHAR_CODE;
+
+typedef struct UniformScannerLiteralStruct {
+  UNIFORM_LITERAL type;
+  size_t size;
+  union {
+    int i32;
+    long int i64;
+    float f32;
+    double f64;
+    char  string[1024];
+  } value;
+} UniformScannerLiteral;
+
+typedef struct UniformScannerTokenStruct {
+  unsigned int line_number;
+  unsigned int level;
+
+  char *tokenp;
+  char source_name[64];
+  char word_string[1024];
+  char token_string[1024];
+
+  UNIFORM_TOKEN_CODE code;
+  UniformScannerLiteral literal;
+} UniformToken;
 
 typedef struct UniformScannerStruct {
   unsigned int line_number;
@@ -30,7 +66,7 @@ typedef struct UniformScannerStruct {
   unsigned int buffer_offset;
   unsigned int digit_count;
 
-  CHAR_CODE char_table[256];
+  UNIFORM_CHAR_CODE char_table[256];
 
   char source_buffer[1024];
   char source_name[64];
@@ -38,6 +74,8 @@ typedef struct UniformScannerStruct {
 
   char *source_bufferp;
   char current_char;
+
+  UniformToken current_token;
 
   unsigned int errored;
 
@@ -48,6 +86,7 @@ struct uniform_scanner_module {
 
   UniformScanner* (*init)(const char*);
   void (*close)(UniformScanner*);
+  void (*get_token)(UniformScanner* scanner);
 };
 
 extern const struct uniform_scanner_module UniformScannerModule;
