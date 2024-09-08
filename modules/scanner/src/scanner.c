@@ -10,6 +10,8 @@ static int get_source_line(UniformScanner *scanner);
 static void get_character(UniformScanner *scanner);
 static void skip_blanks(UniformScanner* scanner);
 static void get_special(UniformScanner *scanner);
+static void get_word(UniformScanner* scanner, int is_constant);
+static void get_string(UniformScanner* scanner);
 
 // ============================
 //        Implementation
@@ -87,14 +89,75 @@ static void skip_blanks(UniformScanner* scanner) {
 }
 
 static void get_token(UniformScanner* scanner) {
-  get_character(scanner);
+  if (scanner->current_char == '\0') {
+    get_character(scanner);
+  }
+
   skip_blanks(scanner);
 
   scanner->current_token.tokenp = scanner->current_token.token_string;
 
   switch(scanner->char_table[scanner->current_char]) {
+    case LETTER_CHAR_CODE:
+      get_word(scanner, 0);
+      break;
+    case UPPERCASE_LETTER_CHAR_CODE:
+      get_word(scanner, 1);
+      break;
+    case QUOTE_CHAR_CODE:
+      get_string(scanner);
+      break;
     default: get_special(scanner);
   }
+}
+
+static void get_word(UniformScanner* scanner, int is_constant) {
+  while(
+    scanner->char_table[scanner->current_char] == LETTER_CHAR_CODE ||
+    scanner->char_table[scanner->current_char] == UPPERCASE_LETTER_CHAR_CODE ||
+    scanner->char_table[scanner->current_char] == UNDERSCORE_CHAR_CODE
+  ) {
+    *(scanner->current_token.tokenp)++ = scanner->current_char;
+    get_character(scanner);
+  }
+
+  *(scanner->current_token.tokenp) = '\0';
+
+  if(!UniformTokenModule.string_is_reserved_word(scanner->current_token.token_string)) {
+    if (is_constant) {
+      scanner->current_token.code = T_CONSTANT;
+    } else {
+      scanner->current_token.code = T_IDENTIFIER;
+    }
+  } else {
+    scanner->current_token.code = UniformTokenModule.get_token_code(scanner->current_token.token_string);
+  }
+}
+
+static void get_string(UniformScanner* scanner) {
+  char* literalp = scanner->current_token.literal.value.string;
+  *(scanner->current_token.tokenp)++ = scanner->current_char == '"' ? '"' : '\'';
+
+  get_character(scanner);
+
+  while(scanner->current_char != EOF_CHAR_CODE) {
+    if(scanner->current_char == '\'' || scanner->current_char == '"') {
+      *(scanner->current_token.tokenp)++ = scanner->current_char;
+      get_character(scanner);
+      if(scanner->current_char != '\'' && scanner->current_char != '"') { break; }
+    }
+
+    *(scanner->current_token.tokenp)++ = scanner->current_char;
+    *literalp++ = scanner->current_char;
+    get_character(scanner);
+  }
+
+  *(scanner->current_token.tokenp) = '\0';
+  *literalp = '\0';
+
+  scanner->current_token.code = T_STRING;
+  scanner->current_token.literal.type = STRING_LIT;
+  scanner->current_token.literal.size = strlen(scanner->current_token.literal.value.string);
 }
 
 static void get_special(UniformScanner *scanner) {
@@ -125,7 +188,7 @@ static void close(UniformScanner *scanner) {
 //            Module
 // ============================
 
-const struct uniform_scanner_module UniformScannerModule = {
+const struct UniformScannerModuleStruct UniformScannerModule = {
   .version = UNIFORM_SCANNER_VERSION,
   .init = init,
   .get_token = get_token,

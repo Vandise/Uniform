@@ -1,3 +1,5 @@
 @import("./import.u")
 
-# this is a comment
+module User
+  # this is a comment
+end

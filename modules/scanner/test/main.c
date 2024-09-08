@@ -5,6 +5,21 @@ define_fixture(before, scanner_before_all) {
   *subject = UniformScannerModule.init("modules/scanner/test/files/tokens.u");
 }
 
+define_fixture(before, scanner_before_populate_chartable) {
+  UniformScanner *scanner = *subject;
+  int ch;
+
+  for (ch = 0;   ch < 256;  ++ch) scanner->char_table[ch] = SPECIAL_CHAR_CODE;
+  for (ch = '0'; ch <= '9'; ++ch) scanner->char_table[ch] = DIGIT_CHAR_CODE;
+  for (ch = 'A'; ch <= 'Z'; ++ch) scanner->char_table[ch] = UPPERCASE_LETTER_CHAR_CODE;
+  for (ch = 'a'; ch <= 'z'; ++ch) scanner->char_table[ch] = LETTER_CHAR_CODE;
+  scanner->char_table['\''] = QUOTE_CHAR_CODE;
+  scanner->char_table['"'] = QUOTE_CHAR_CODE;
+  scanner->char_table['\n'] = NEWLINE_CHAR_CODE;
+  scanner->char_table['_'] = UNDERSCORE_CHAR_CODE;
+  scanner->char_table[EOF_CHAR] = EOF_CHAR_CODE;
+}
+
 define_fixture(after, scanner_after_all) {
   UniformScanner *scanner = *subject;
   UniformScannerModule.close(scanner);
@@ -75,12 +90,28 @@ describe("Scanner Test Suite", scanner_test_suite)
   end
 
   context(".get_token")
+    before(scanner_before_populate_chartable)
+
     when("A file is found")
-      it("extracts the token")
+      it("extracts the expected tokens")
         UniformScanner *scanner = subject();
         UniformScannerModule.get_token(scanner);
 
         expect(scanner->current_token.code) to equal(T_MACRO)
+
+        UniformScannerModule.get_token(scanner);
+        expect(scanner->current_token.code) to equal(T_IDENTIFIER)
+        expect(scanner->current_token.token_string) to equal("import")
+
+        UniformScannerModule.get_token(scanner);
+        expect(scanner->current_token.code) to equal(T_LPAREN)
+
+        UniformScannerModule.get_token(scanner);
+        expect(scanner->current_token.code) to equal(T_STRING)
+        expect(scanner->current_token.token_string) to equal("\"./import.u\"")
+
+        UniformScannerModule.get_token(scanner);
+        expect(scanner->current_token.code) to equal(T_RPAREN)
       end
     end
   end

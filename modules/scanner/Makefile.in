@@ -30,7 +30,9 @@ scanner_install:
 
 scanner_module: $(SCANNER_OBJECTS)
 
-$(SCANNER_OBJECTS): $(SCANNER_FILES)
+$(SCANNER_DIR)/obj/%.o: $(SCANNER_DIR)/src/%.c
+	echo $<
+	echo $@
 	$(CC) $(CFLAGS) $(ADDFLAGS) -c $< -o $@
 
 scanner_library:

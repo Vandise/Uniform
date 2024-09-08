@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include "uniform/scanner/tokens.h"
 
 #define EOF_CHAR     '\x7f'
 #define NEWLINE_CHAR '\n'
@@ -15,12 +16,6 @@
 typedef enum {
   I_32LIT, I_64LIT, F_32LIT, F_64LIT, STRING_LIT,
 } UNIFORM_LITERAL;
-
-typedef enum {
-  UNDEFINED_TOKEN, T_ERROR, T_NEWLINE, T_END_OF_FILE,
-  T_MACRO, T_IDENTIFIER, T_STRING,
-  T_LPAREN, T_RPAREN
-} UNIFORM_TOKEN_CODE;
 
 typedef enum {
   UNDEFINED_CHAR_CODE,
@@ -81,7 +76,7 @@ typedef struct UniformScannerStruct {
 
 } UniformScanner;
 
-struct uniform_scanner_module {
+struct UniformScannerModuleStruct {
   const signed int version;
 
   UniformScanner* (*init)(const char*);
@@ -89,6 +84,6 @@ struct uniform_scanner_module {
   void (*get_token)(UniformScanner* scanner);
 };
 
-extern const struct uniform_scanner_module UniformScannerModule;
+extern const struct UniformScannerModuleStruct UniformScannerModule;
 
 #endif
