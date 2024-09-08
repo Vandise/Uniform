@@ -112,6 +112,25 @@ describe("Scanner Test Suite", scanner_test_suite)
 
         UniformScannerModule.get_token(scanner);
         expect(scanner->current_token.code) to equal(T_RPAREN)
+
+        UniformScannerModule.get_token(scanner);
+        expect(scanner->current_token.code) to equal(T_NEWLINE)
+
+        UniformScannerModule.get_token(scanner);
+        expect(scanner->current_token.code) to equal(T_MODULE)
+
+        UniformScannerModule.get_token(scanner);
+        expect(scanner->current_token.code) to equal(T_CONSTANT)
+        expect(scanner->current_token.token_string) to equal("User")
+
+        UniformScannerModule.get_token(scanner);
+        expect(scanner->current_token.code) to equal(T_NEWLINE)
+
+        UniformScannerModule.get_token(scanner);
+        expect(scanner->current_token.code) to equal(T_END)
+
+        UniformScannerModule.get_token(scanner);
+        expect(scanner->current_token.code) to equal(T_END_OF_FILE)
       end
     end
   end

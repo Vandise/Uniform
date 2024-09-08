@@ -65,7 +65,7 @@ static int get_source_line(UniformScanner *scanner) {
 static void get_character(UniformScanner *scanner) {
   if (*(scanner->source_bufferp) == '\0') {
     if (!get_source_line(scanner)) {
-      scanner->current_char = EOF_CHAR_CODE;
+      scanner->current_char = EOF_CHAR;
       return;
     }
 
@@ -104,8 +104,16 @@ static void get_token(UniformScanner* scanner) {
     case UPPERCASE_LETTER_CHAR_CODE:
       get_word(scanner, 1);
       break;
+    case NEWLINE_CHAR_CODE:
+      scanner->current_token.code = T_NEWLINE;
+      *(scanner->current_token.tokenp) = '\0';
+      get_character(scanner);
+      break;
     case QUOTE_CHAR_CODE:
       get_string(scanner);
+      break;
+    case EOF_CHAR_CODE:
+      scanner->current_token.code = T_END_OF_FILE;
       break;
     default: get_special(scanner);
   }
