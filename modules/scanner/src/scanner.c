@@ -22,7 +22,7 @@ static UniformScanner* init(const char *file_name) {
 
   UniformScanner* scanner = malloc(sizeof(UniformScanner));
   strcpy(scanner->source_name, file_name);
-  strcpy(scanner->source_buffer, "");
+  strcpy(scanner->source_buffer, "\0");
 
   scanner->current_char = '\0';
   scanner->source_bufferp = NULL;
@@ -108,6 +108,12 @@ static void get_token(UniformScanner* scanner) {
       scanner->current_token.code = T_NEWLINE;
       *(scanner->current_token.tokenp) = '\0';
       get_character(scanner);
+      break;
+    case CARRIAGE_RETURN_CHAR_CODE:
+      scanner->current_token.code = T_NEWLINE;
+      get_character(scanner);
+      get_character(scanner);
+      *(scanner->current_token.tokenp) = '\0';
       break;
     case QUOTE_CHAR_CODE:
       get_string(scanner);
