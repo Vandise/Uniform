@@ -20,6 +20,10 @@ jobs:
     - name: configure
       run: sudo ./configure
 
+    - name: make utilities
+      run: |
+        make logger
+
     - name: make scanner
       run: make scanner
 

@@ -17,6 +17,10 @@ jobs:
     - name: configure
       run: sudo ./configure
 
+    - name: make utilities
+      run: |
+        sudo make logger
+
     - name: make scanner
       run: sudo make scanner
 

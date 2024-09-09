@@ -56,6 +56,14 @@ jobs:
         MINGW_INSTALLS: ${{ matrix.task.installs }}
         CI: true
 
+    - name: make utilities
+      run: |
+        C:\tools\msys64\usr\bin\bash -lc "make logger"
+      env:
+        HOME: ${{ runner.workspace }}/uniform
+        MINGW_INSTALLS: ${{ matrix.task.installs }}
+        CI: true
+
     - name: make scanner
       run: C:\tools\msys64\usr\bin\bash -lc "make scanner"
       env:
