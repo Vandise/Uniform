@@ -1,7 +1,6 @@
 #include "awry/awry.h"
 #include "uniform/scanner/shared.h"
 
-
 static void init_chartable(UniformScanner* scanner) {
   int ch;
 
@@ -119,6 +118,10 @@ describe("Scanner Test Suite", scanner_test_suite)
 end
 
 int main(void) {
+  UniformLogger.log_level = UNIFORM_LOG_INFO;
+
+  UniformLogger.log_info("Running testsuite for Scanner Module version %d", UNIFORM_SCANNER_VERSION);
+
   Awry.run();
   Awry.clear(&Awry);
   return 0;

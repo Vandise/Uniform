@@ -5,6 +5,9 @@ INC_DIR     := inc/
 ADDFLAGS    := -g -O2 -std=c11
 SHAREDFLAG  := -shared
 
+ARCHIVER    := @ARCHIVER@
+ARCHIVE_EXT := a
+
 ifeq ($(OS), Windows_NT)
   LIBEXT    := dll
   SYSLIBDIR := /c/Windows/system32
@@ -26,4 +29,5 @@ else
   endif
 endif
 
+-include modules/logger/Makefile.in
 -include modules/scanner/Makefile.in

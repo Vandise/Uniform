@@ -6,6 +6,7 @@ export LD_LIBRARY_PATH='/usr/local/include:/usr/local/lib:/mingw64/include:/ming
 export CFLAGS='-I/usr/local/lib -I/usr/local/include -I/c/MinGW/msys/1.0/include'
 
 AC_SUBST(CFLAGS, '-I/usr/local/lib -I/usr/local/include -I/mingw64/include -I/usr/include -Iinc')
+AC_SUBST(ARCHIVER, 'ar')
 
 AC_CHECK_PROG(GIT,[git],[yes],[no])
 test "$GIT" == "no" && AC_MSG_ERROR([Required program 'git' not found.])

@@ -33,6 +33,7 @@ static UniformScanner* init(const char *file_name) {
 
   if (open_source_file(scanner) == 0) {
     // todo: Fatal error with errors module.
+    UniformLogger.log_fatal("Scanner::get_source_line(error: unable to open source file %s)", file_name);
     scanner->errored = 1;
     return scanner;
   }
@@ -45,6 +46,8 @@ static UniformScanner* init(const char *file_name) {
 }
 
 static int open_source_file(UniformScanner *scanner) {
+  UniformLogger.log_info("Scanner::open_source_file(file: %s)", scanner->source_name);
+
   scanner->source_file = fopen(scanner->source_name, "r");
 
   if (errno != 0) { return 0; }
@@ -55,6 +58,8 @@ static int open_source_file(UniformScanner *scanner) {
 }
 
 static int get_source_line(UniformScanner *scanner) {
+  UniformLogger.log_info("Scanner::get_source_line");
+
   if (scanner != NULL && fgets(scanner->source_buffer, UNIFORM_SCANNER_MAX_SOURCE_LINE, scanner->source_file) != NULL) {
     scanner->line_number += 1;
     return 1;
@@ -63,6 +68,8 @@ static int get_source_line(UniformScanner *scanner) {
 }
 
 static void get_character(UniformScanner *scanner) {
+  UniformLogger.log_debug("Scanner::get_character");
+
   if (*(scanner->source_bufferp) == '\0') {
     if (!get_source_line(scanner)) {
       scanner->current_char = EOF_CHAR;
@@ -74,6 +81,8 @@ static void get_character(UniformScanner *scanner) {
   }
 
   scanner->current_char = *(scanner->source_bufferp)++;
+
+  UniformLogger.log_debug("Scanner::get_character(current char: %c)", scanner->current_char);
 
   switch(scanner->current_char) {
     // todo: skip comments
@@ -89,6 +98,8 @@ static void skip_blanks(UniformScanner* scanner) {
 }
 
 static void get_token(UniformScanner* scanner) {
+  UniformLogger.log_debug("Scanner::get_token(current char: %c)", scanner->current_char);
+
   if (scanner->current_char == '\0') {
     get_character(scanner);
   }
@@ -126,6 +137,8 @@ static void get_token(UniformScanner* scanner) {
 }
 
 static void get_word(UniformScanner* scanner, int is_constant) {
+  UniformLogger.log_info("Scanner::get_word(is constant: %d)", is_constant);
+
   while(
     scanner->char_table[scanner->current_char] == LETTER_CHAR_CODE ||
     scanner->char_table[scanner->current_char] == UPPERCASE_LETTER_CHAR_CODE ||
@@ -136,6 +149,8 @@ static void get_word(UniformScanner* scanner, int is_constant) {
   }
 
   *(scanner->current_token.tokenp) = '\0';
+
+  UniformLogger.log_info("Scanner::get_word(current word: %s)", scanner->current_token.token_string);
 
   if(!UniformTokenModule.string_is_reserved_word(scanner->current_token.token_string)) {
     if (is_constant) {
@@ -149,6 +164,8 @@ static void get_word(UniformScanner* scanner, int is_constant) {
 }
 
 static void get_string(UniformScanner* scanner) {
+  UniformLogger.log_info("Scanner::get_string");
+
   char* literalp = scanner->current_token.literal.value.string;
   *(scanner->current_token.tokenp)++ = scanner->current_char == '"' ? '"' : '\'';
 
@@ -166,6 +183,12 @@ static void get_string(UniformScanner* scanner) {
     get_character(scanner);
   }
 
+  UniformLogger.log_info(
+    "Scanner::get_string(string: %s, size: %d)",
+    scanner->current_token.literal.value.string,
+    strlen(scanner->current_token.literal.value.string)
+  );
+
   *(scanner->current_token.tokenp) = '\0';
   *literalp = '\0';
 
@@ -175,6 +198,8 @@ static void get_string(UniformScanner* scanner) {
 }
 
 static void get_special(UniformScanner *scanner) {
+  UniformLogger.log_info("Scanner::get_special(current character: %c)", scanner->current_char);
+
   *(scanner->current_token.tokenp) = scanner->current_char;
 
   switch(scanner->current_char) {
@@ -182,6 +207,7 @@ static void get_special(UniformScanner *scanner) {
     case ')':   scanner->current_token.code = T_RPAREN; get_character(scanner);  break;
     case '@':   scanner->current_token.code = T_MACRO;  get_character(scanner);  break;
     default:
+      UniformLogger.log_info("Scanner::get_special(status: errored)");
       scanner->errored = 1;
       scanner->current_token.code = T_ERROR;
   }
@@ -190,6 +216,8 @@ static void get_special(UniformScanner *scanner) {
 }
 
 static void close(UniformScanner *scanner) {
+  UniformLogger.log_info("Scanner::close(file: %s)", scanner->source_name);
+
   if (scanner->source_file != NULL) {
     fclose(scanner->source_file);
     scanner->source_file = NULL;

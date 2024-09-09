@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include "uniform/logger/shared.h"
 #include "uniform/scanner/tokens.h"
 
 #define EOF_CHAR     '\x7f'

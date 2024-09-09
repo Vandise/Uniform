@@ -1,5 +1,5 @@
 SCANNER_DIR := modules/scanner
-SCANNER_LIB_NAME := lib/uniformscanner.$(LIBEXT)
+SCANNER_LIB_NAME := lib/libuniformscanner.$(LIBEXT)
 
 SCANNER_MAJOR_VERSION := 1
 SCANNER_MINOR_VERSION := 0
@@ -13,8 +13,8 @@ SCANNER_TEST_FILES   := $(wildcard $(SCANNER_DIR)/test/*.c)
 SCANNER_TEST_OBJECTS := $(patsubst $(SCANNER_DIR)/test/%.c, $(SCANNER_DIR)/obj/%.o, $(SCANNER_TEST_FILES))
 
 ifeq ($(UNAME), Darwin)
-  SHAREDFLAG   := $(SHAREDFLAG) -install_name uniformscanner.dylib -compatibility_version $(SCANNER_MAJOR_VERSION).$(SCANNER_MINOR_VERSION) -current_version $(SCANNER_MAJOR_VERSION).$(SCANNER_MINOR_VERSION).$(SCANNER_MAINT_VERSION)
-  SCANNER_LIB_NAME := lib/uniformscanner.$(LIBEXT).$(SCANNER_MAJOR_VERSION).$(SCANNER_MINOR_VERSION).$(SCANNER_MAINT_VERSION)
+  SHAREDFLAG   := $(SHAREDFLAG) -install_name libuniformscanner.dylib -compatibility_version $(SCANNER_MAJOR_VERSION).$(SCANNER_MINOR_VERSION) -current_version $(SCANNER_MAJOR_VERSION).$(SCANNER_MINOR_VERSION).$(SCANNER_MAINT_VERSION)
+  SCANNER_LIB_NAME := lib/libuniformscanner.$(LIBEXT).$(SCANNER_MAJOR_VERSION).$(SCANNER_MINOR_VERSION).$(SCANNER_MAINT_VERSION)
 endif
 
 scanner: scanner_mkdir scanner_add_headers scanner_module scanner_library scanner_tests scanner_install
@@ -31,15 +31,13 @@ scanner_install:
 scanner_module: $(SCANNER_OBJECTS)
 
 $(SCANNER_DIR)/obj/%.o: $(SCANNER_DIR)/src/%.c
-	echo $<
-	echo $@
 	$(CC) $(CFLAGS) $(ADDFLAGS) -c $< -o $@
 
 scanner_library:
-	$(CC) $(SHAREDFLAG) $(SCANNER_OBJECTS) -o $(SCANNER_LIB_NAME)
+	$(CC) $(SHAREDFLAG) $(SCANNER_OBJECTS) $(LOGGER_LIB_NAME) -o $(SCANNER_LIB_NAME)
 
 scanner_tests: $(SCANNER_TEST_OBJECTS)
-	$(CC) $(CFLAGS) $(ADDFLAGS) -o bin/scanner_tests $(SCANNER_OBJECTS) $(SCANNER_TEST_OBJECTS) -lawry
+	$(CC) $(CFLAGS) $(ADDFLAGS) -o bin/scanner_tests $(SCANNER_OBJECTS) $(SCANNER_TEST_OBJECTS) $(LOGGER_LIB_NAME) -lawry
 
 $(SCANNER_TEST_OBJECTS): $(SCANNER_TEST_FILES)
 	$(CC) $(CFLAGS) $(ADDFLAGS) -c $< -o $@

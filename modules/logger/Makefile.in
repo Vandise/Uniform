@@ -1,0 +1,26 @@
+LOGGER_DIR := modules/logger
+LOGGER_LIB_NAME := lib/libuniformlogger.$(ARCHIVE_EXT)
+
+LOGGER_FILES        := $(wildcard $(LOGGER_DIR)/src/*.c)
+LOGGER_HEADERS      := $(wildcard $(LOGGER_DIR)/inc/*.h)
+
+LOGGER_OBJECTS      := $(patsubst $(LOGGER_DIR)/src/%.c, $(LOGGER_DIR)/obj/%.o, $(LOGGER_FILES))
+
+logger: logger_mkdir logger_add_headers logger_module logger_library
+
+logger_mkdir:
+	mkdir -p $(SYSINCDIR)/uniform/logger
+
+logger_add_headers:
+	cp $(LOGGER_HEADERS) $(SYSINCDIR)/uniform/logger
+
+logger_install:
+	cp $(LOGGER_LIB_NAME) $(SYSLIBDIR)
+
+logger_module: $(LOGGER_OBJECTS)
+
+$(LOGGER_DIR)/obj/%.o: $(LOGGER_DIR)/src/%.c
+	$(CC) $(CFLAGS) $(ADDFLAGS) -c $< -o $@
+
+logger_library:
+	$(ARCHIVER) rcs $(LOGGER_LIB_NAME) $(LOGGER_OBJECTS)
