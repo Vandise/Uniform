@@ -1,7 +1,7 @@
 #include "awry/awry.h"
 #include "uniform/preprocessor/shared.h"
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
   #define SCANNER_LIB "lib/libuniformscanner.dll"
 #endif
 
