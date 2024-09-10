@@ -24,8 +24,12 @@ jobs:
     - name: make scanner
       run: sudo make scanner
 
+    - name: make preprocessor
+      run: make preprocessor
+
     - name: run tests
       run: |
         export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
         export DYLD_FALLBACK_LIBRARY_PATH=$DYLD_FALLBACK_LIBRARY_PATH:/usr/local/lib
         ./bin/scanner_tests
+        ./bin/preprocessor_tests

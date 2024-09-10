@@ -31,8 +31,10 @@ endif
 
 -include modules/logger/Makefile.in
 -include modules/scanner/Makefile.in
+-include modules/preprocessor/Makefile.in
 
 clean:
 	rm -r lib*
-	rm -r modules/scanner/obj/*
-	rm -r modules/logger/obj/*
+	rm -r modules/scanner/obj/*.o
+	rm -r modules/logger/obj/*.o
+	rm -r modules/preprocessor/obj/*.o

@@ -1,0 +1,3 @@
+@import("imports/author")
+module Author
+end

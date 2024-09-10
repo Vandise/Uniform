@@ -86,7 +86,7 @@ describe("Scanner Test Suite", scanner_test_suite)
 
         UniformScannerModule.get_token(scanner);
         expect(scanner->current_token.code) to equal(T_STRING)
-        expect(scanner->current_token.token_string) to equal("\"./import.u\"")
+        expect(scanner->current_token.token_string) to equal("\"./import\"")
 
         UniformScannerModule.get_token(scanner);
         expect(scanner->current_token.code) to equal(T_CLOSE_PAREN)

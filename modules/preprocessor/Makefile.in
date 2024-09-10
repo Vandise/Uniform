@@ -1,0 +1,34 @@
+PREPROCESSOR_DIR := modules/preprocessor
+PREPROCESSOR_LIB_NAME := lib/libuniformpreprocessor.$(ARCHIVE_EXT)
+
+PREPROCESSOR_FILES        := $(wildcard $(PREPROCESSOR_DIR)/src/*.c)
+PREPROCESSOR_HEADERS      := $(wildcard $(PREPROCESSOR_DIR)/inc/*.h)
+PREPROCESSOR_OBJECTS      := $(patsubst $(PREPROCESSOR_DIR)/src/%.c, $(PREPROCESSOR_DIR)/obj/%.o, $(PREPROCESSOR_FILES))
+
+PREPROCESSOR_TEST_FILES   := $(wildcard $(PREPROCESSOR_DIR)/test/*.c)
+PREPROCESSOR_TEST_OBJECTS := $(patsubst $(PREPROCESSOR_DIR)/test/%.c, $(PREPROCESSOR_DIR)/obj/%.o, $(PREPROCESSOR_TEST_FILES))
+
+preprocessor: preprocessor_mkdir preprocessor_add_headers preprocessor_module preprocessor_library preprocessor_tests
+
+preprocessor_mkdir:
+	mkdir -p $(SYSINCDIR)/uniform/preprocessor
+
+preprocessor_add_headers:
+	cp $(PREPROCESSOR_HEADERS) $(SYSINCDIR)/uniform/preprocessor
+
+preprocessor_install:
+	cp $(PREPROCESSOR_LIB_NAME) $(SYSLIBDIR)
+
+preprocessor_module: $(PREPROCESSOR_OBJECTS)
+
+$(PREPROCESSOR_DIR)/obj/%.o: $(PREPROCESSOR_DIR)/src/%.c
+	$(CC) $(CFLAGS) $(ADDFLAGS) -c $< -o $@
+
+preprocessor_library:
+	$(ARCHIVER) rcs $(PREPROCESSOR_LIB_NAME) $(PREPROCESSOR_OBJECTS) $(LOGGER_LIB_NAME)
+
+preprocessor_tests: $(PREPROCESSOR_TEST_OBJECTS)
+	$(CC) $(CFLAGS) $(ADDFLAGS) -o bin/preprocessor_tests $(PREPROCESSOR_OBJECTS) $(PREPROCESSOR_TEST_OBJECTS) $(LOGGER_LIB_NAME) -lawry
+
+$(PREPROCESSOR_TEST_OBJECTS): $(PREPROCESSOR_TEST_FILES)
+	$(CC) $(CFLAGS) $(ADDFLAGS) -c $< -o $@
