@@ -82,14 +82,14 @@ describe("Scanner Test Suite", scanner_test_suite)
         expect(scanner->current_token.token_string) to equal("import")
 
         UniformScannerModule.get_token(scanner);
-        expect(scanner->current_token.code) to equal(T_LPAREN)
+        expect(scanner->current_token.code) to equal(T_OPEN_PAREN)
 
         UniformScannerModule.get_token(scanner);
         expect(scanner->current_token.code) to equal(T_STRING)
         expect(scanner->current_token.token_string) to equal("\"./import.u\"")
 
         UniformScannerModule.get_token(scanner);
-        expect(scanner->current_token.code) to equal(T_RPAREN)
+        expect(scanner->current_token.code) to equal(T_CLOSE_PAREN)
 
         UniformScannerModule.get_token(scanner);
         expect(scanner->current_token.code) to equal(T_NEWLINE)
@@ -100,6 +100,31 @@ describe("Scanner Test Suite", scanner_test_suite)
         UniformScannerModule.get_token(scanner);
         expect(scanner->current_token.code) to equal(T_CONSTANT)
         expect(scanner->current_token.token_string) to equal("User")
+
+        UniformScannerModule.get_token(scanner);
+        expect(scanner->current_token.code) to equal(T_NEWLINE)
+
+        UniformScannerModule.get_token(scanner);
+        expect(scanner->current_token.code) to equal(T_NUMERIC)
+        expect(scanner->current_token.literal.value.i32) to equal(42)
+
+        UniformScannerModule.get_token(scanner);
+        expect(scanner->current_token.code) to equal(T_NUMERIC)
+        expect(scanner->current_token.literal.value.f32) to equal(0.42)
+
+        UniformScannerModule.get_token(scanner);
+        expect(scanner->current_token.code) to equal(T_NEWLINE)
+
+        UNIFORM_TOKEN_CODE special_tokens[] = {
+          T_DOT, T_EQUAL, T_OPEN_CURLY_BRACE, T_CLOSE_CURLY_BRACE, T_OPEN_BRACKET, T_CLOSE_BRACKET,
+          T_PLUS, T_MINUS, T_STAR, T_SLASH, T_PIN, T_COLON, T_SEMICOLON, T_COMMA, T_QUESTION, T_BANG,
+          T_OPEN_PAREN, T_CLOSE_PAREN
+        };
+
+        for (int i = 0; i < 18; i++) {
+          UniformScannerModule.get_token(scanner);
+          expect(scanner->current_token.code) to equal(special_tokens[i]) 
+        }
 
         UniformScannerModule.get_token(scanner);
         expect(scanner->current_token.code) to equal(T_NEWLINE)

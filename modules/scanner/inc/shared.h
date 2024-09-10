@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
+#include <float.h>
 #include <errno.h>
 #include "uniform/logger/shared.h"
 #include "uniform/scanner/tokens.h"
@@ -14,6 +16,11 @@
 #define COMMENT_CHAR '#'
 #define UNIFORM_SCANNER_VERSION 100
 #define UNIFORM_SCANNER_MAX_SOURCE_LINE 1024
+
+#define I_32_LOWER -2147483648
+#define I_32_UPPER  2147483647
+#define I_64_LOWER -9223372036854775807
+#define I_64_UPPER  9223372036854775806
 
 typedef enum {
   I_32LIT, I_64LIT, F_32LIT, F_64LIT, STRING_LIT,

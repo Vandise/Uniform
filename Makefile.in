@@ -31,3 +31,8 @@ endif
 
 -include modules/logger/Makefile.in
 -include modules/scanner/Makefile.in
+
+clean:
+	rm -r lib*
+	rm -r modules/scanner/obj/*
+	rm -r modules/logger/obj/*

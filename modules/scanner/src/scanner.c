@@ -12,6 +12,8 @@ static void skip_blanks(UniformScanner* scanner);
 static void get_special(UniformScanner *scanner);
 static void get_word(UniformScanner* scanner, int is_constant);
 static void get_string(UniformScanner* scanner);
+static void get_numeric(UniformScanner* scanner);
+static void accumulate_value(UniformScanner *scanner, double *valuep);
 
 // ============================
 //        Implementation
@@ -72,6 +74,7 @@ static void get_character(UniformScanner *scanner) {
 
   if (*(scanner->source_bufferp) == '\0') {
     if (!get_source_line(scanner)) {
+      UniformLogger.log_debug("Scanner::get_character(eof char: 1)");
       scanner->current_char = EOF_CHAR;
       return;
     }
@@ -125,6 +128,9 @@ static void get_token(UniformScanner* scanner) {
       get_character(scanner);
       get_character(scanner);
       *(scanner->current_token.tokenp) = '\0';
+      break;
+    case DIGIT_CHAR_CODE:
+      get_numeric(scanner);
       break;
     case QUOTE_CHAR_CODE:
       get_string(scanner);
@@ -197,15 +203,125 @@ static void get_string(UniformScanner* scanner) {
   scanner->current_token.literal.size = strlen(scanner->current_token.literal.value.string);
 }
 
+static void get_numeric(UniformScanner* scanner) {
+  UniformLogger.log_info("Scanner::get_numeric");
+
+  // assume larger unsigned 8 bytes
+  long int whole_count = 0;
+  long int decimal_offset = 0;
+  long int exponent = 0;
+  double nvalue = 0.0;
+  double evalue = 0.0;
+
+  scanner->digit_count = 0;
+  scanner->current_token.code = UNDEFINED_TOKEN;
+  scanner->current_token.literal.type = I_64LIT;
+
+  accumulate_value(scanner, &nvalue);
+
+  if (scanner->errored == 1) {
+    return;
+  }
+
+  whole_count = scanner->digit_count;
+
+  if (scanner->current_char == '.') {
+    get_character(scanner);
+
+    scanner->current_token.literal.type = F_64LIT;
+    *(scanner->current_token.tokenp)++ = '.';
+
+    accumulate_value(scanner, &nvalue);
+
+    if (scanner->errored == 1) {
+      return;
+    }
+
+    decimal_offset = whole_count - scanner->digit_count;
+  }
+
+  exponent = evalue + decimal_offset;
+
+  if (exponent != 0) {
+    nvalue *= pow(10, exponent);
+  }
+
+  if (scanner->current_token.literal.type == I_64LIT) {
+    if (nvalue >= I_32_LOWER && nvalue <= I_32_UPPER) {
+      scanner->current_token.literal.type = I_32LIT;
+      scanner->current_token.literal.value.i32 = nvalue;
+      scanner->current_token.literal.size = sizeof(int);
+    } else {
+      scanner->current_token.literal.value.i64 = nvalue;
+      scanner->current_token.literal.size = sizeof(long int);
+    }
+  } else {
+    if (labs(exponent) <= FLT_DIG && nvalue >= FLT_MIN && nvalue <= FLT_MAX) {
+      scanner->current_token.literal.type = F_32LIT;
+      scanner->current_token.literal.value.f32 = nvalue;
+      scanner->current_token.literal.size = sizeof(float);
+    } else {
+      scanner->current_token.literal.value.f64 = nvalue;
+      scanner->current_token.literal.size = sizeof(double);
+    }
+  }
+
+  *(scanner->current_token.tokenp) = '\0';
+  scanner->current_token.code = T_NUMERIC;
+}
+
+static void accumulate_value(UniformScanner *scanner, double *valuep) {
+  double value = *valuep;
+
+  if (scanner->char_table[scanner->current_char] != DIGIT_CHAR_CODE) {
+    scanner->current_token.code = T_ERROR;
+    scanner->errored = 1;
+    // invalid numeric
+    return;
+  }
+
+  do {
+    *(scanner->current_token.tokenp)++ = scanner->current_char;
+
+    if (++scanner->digit_count <= DECIMAL_DIG) {
+      value = 10 * value + (scanner->current_char - '0');
+    } else {
+      // todo: precision lost
+      scanner->errored = 1;
+    }
+
+    get_character(scanner);
+
+  } while(scanner->char_table[scanner->current_char] == DIGIT_CHAR_CODE);
+
+  *valuep = value;
+}
+
 static void get_special(UniformScanner *scanner) {
   UniformLogger.log_info("Scanner::get_special(current character: %c)", scanner->current_char);
 
   *(scanner->current_token.tokenp) = scanner->current_char;
 
   switch(scanner->current_char) {
-    case '(':   scanner->current_token.code = T_LPAREN; get_character(scanner);  break;
-    case ')':   scanner->current_token.code = T_RPAREN; get_character(scanner);  break;
     case '@':   scanner->current_token.code = T_MACRO;  get_character(scanner);  break;
+    case '.':   scanner->current_token.code = T_DOT;    get_character(scanner);  break;
+    case '=':   scanner->current_token.code = T_EQUAL;  get_character(scanner);  break;
+    case '{':   scanner->current_token.code = T_OPEN_CURLY_BRACE;   get_character(scanner);  break;
+    case '}':   scanner->current_token.code = T_CLOSE_CURLY_BRACE;  get_character(scanner);  break;
+    case '[':   scanner->current_token.code = T_OPEN_BRACKET;       get_character(scanner);  break;
+    case ']':   scanner->current_token.code = T_CLOSE_BRACKET;      get_character(scanner);  break;
+    case '+':   scanner->current_token.code = T_PLUS;      get_character(scanner);  break;
+    case '-':   scanner->current_token.code = T_MINUS;     get_character(scanner);  break;
+    case '*':   scanner->current_token.code = T_STAR;      get_character(scanner);  break;
+    case '/':   scanner->current_token.code = T_SLASH;     get_character(scanner);  break;
+    case '^':   scanner->current_token.code = T_PIN;       get_character(scanner);  break;
+    case ':':   scanner->current_token.code = T_COLON;     get_character(scanner);  break;
+    case ';':   scanner->current_token.code = T_SEMICOLON; get_character(scanner);  break;
+    case ',':   scanner->current_token.code = T_COMMA;     get_character(scanner);  break;
+    case '?':   scanner->current_token.code = T_QUESTION;  get_character(scanner);  break;
+    case '!':   scanner->current_token.code = T_BANG;      get_character(scanner);  break;
+    case '(':   scanner->current_token.code = T_OPEN_PAREN;  get_character(scanner);  break;
+    case ')':   scanner->current_token.code = T_CLOSE_PAREN; get_character(scanner);  break;
     default:
       UniformLogger.log_info("Scanner::get_special(status: errored)");
       scanner->errored = 1;
