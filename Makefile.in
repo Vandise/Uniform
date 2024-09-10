@@ -15,6 +15,7 @@ ifeq ($(OS), Windows_NT)
   ADDFLAGS  := $(ADDFLAGS) -L/c/Windows/system32
 else
   ifeq ($(UNAME), Linux)
+    LIBEXT    := so
     SYSLIBDIR := /usr/local/lib
     SYSINCDIR := /usr/local/include
     ADDFLAGS  := $(ADDFLAGS) -fPIC
