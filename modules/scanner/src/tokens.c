@@ -13,7 +13,7 @@ UniformKeyWord kw3[] = {
 };
 
 UniformKeyWord kw4[] = {
-  { NULL, 0 }
+  {"func", T_FUNC }, {"case", T_CASE }, { NULL, 0 }
 };
 
 UniformKeyWord kw5[] = {
@@ -21,7 +21,7 @@ UniformKeyWord kw5[] = {
 };
 
 UniformKeyWord kw6[] = {
-  {"module", T_MODULE }, { NULL, 0 }
+  {"module", T_MODULE }, {"struct", T_STRUCT }, {"return", T_RETURN }, { NULL, 0 }
 };
 
 UniformKeyWord *kw_table[] = { NULL, kw1, kw2, kw3, kw4, kw5, kw6 };

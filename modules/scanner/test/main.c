@@ -118,10 +118,10 @@ describe("Scanner Test Suite", scanner_test_suite)
         UNIFORM_TOKEN_CODE special_tokens[] = {
           T_DOT, T_EQUAL, T_OPEN_CURLY_BRACE, T_CLOSE_CURLY_BRACE, T_OPEN_BRACKET, T_CLOSE_BRACKET,
           T_PLUS, T_MINUS, T_STAR, T_SLASH, T_PIN, T_COLON, T_SEMICOLON, T_COMMA, T_QUESTION, T_BANG,
-          T_OPEN_PAREN, T_CLOSE_PAREN, T_PIPE, T_GREATER_THAN, T_LESS_THAN, T_TILDE
+          T_OPEN_PAREN, T_CLOSE_PAREN, T_PIPE, T_GREATER_THAN, T_LESS_THAN, T_TILDE, T_PERCENT
         };
 
-        for (int i = 0; i < 22; i++) {
+        for (int i = 0; i < 23; i++) {
           UniformScannerModule.get_token(scanner);
           expect(scanner->current_token.code) to equal(special_tokens[i]) 
         }
@@ -134,6 +134,18 @@ describe("Scanner Test Suite", scanner_test_suite)
 
         UniformScannerModule.get_token(scanner);
         expect(scanner->current_token.code) to equal(T_LAMBDA)
+        
+        UniformScannerModule.get_token(scanner);
+        expect(scanner->current_token.code) to equal(T_NEWLINE)
+
+        UNIFORM_TOKEN_CODE keyword_tokens[] = {
+          T_FUNC, T_STRUCT, T_CASE, T_RETURN
+        };
+
+        for (int i = 0; i < 4; i++) {
+          UniformScannerModule.get_token(scanner);
+          expect(scanner->current_token.code) to equal(keyword_tokens[i]) 
+        }
         
         UniformScannerModule.get_token(scanner);
         expect(scanner->current_token.code) to equal(T_NEWLINE)

@@ -322,6 +322,7 @@ static void get_special(UniformScanner *scanner) {
     case '*':   scanner->current_token.code = T_STAR;      get_character(scanner);  break;
     case '/':   scanner->current_token.code = T_SLASH;     get_character(scanner);  break;
     case '^':   scanner->current_token.code = T_PIN;       get_character(scanner);  break;
+    case '%':   scanner->current_token.code = T_PERCENT;   get_character(scanner);  break;
     case ':':   scanner->current_token.code = T_COLON;     get_character(scanner);  break;
     case ';':   scanner->current_token.code = T_SEMICOLON; get_character(scanner);  break;
     case ',':   scanner->current_token.code = T_COMMA;     get_character(scanner);  break;
