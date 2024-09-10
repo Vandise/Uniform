@@ -25,7 +25,7 @@ jobs:
       run: sudo make scanner
 
     - name: make preprocessor
-      run: make preprocessor
+      run: sudo make preprocessor
 
     - name: run tests
       run: |
