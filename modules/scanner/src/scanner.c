@@ -311,7 +311,14 @@ static void get_special(UniformScanner *scanner) {
     case '[':   scanner->current_token.code = T_OPEN_BRACKET;       get_character(scanner);  break;
     case ']':   scanner->current_token.code = T_CLOSE_BRACKET;      get_character(scanner);  break;
     case '+':   scanner->current_token.code = T_PLUS;      get_character(scanner);  break;
-    case '-':   scanner->current_token.code = T_MINUS;     get_character(scanner);  break;
+    case '-':
+      scanner->current_token.code = T_MINUS;
+      get_character(scanner);
+      if (scanner->current_char == '>') {
+        scanner->current_token.code = T_LAMBDA;
+        get_character(scanner);
+      }
+      break;
     case '*':   scanner->current_token.code = T_STAR;      get_character(scanner);  break;
     case '/':   scanner->current_token.code = T_SLASH;     get_character(scanner);  break;
     case '^':   scanner->current_token.code = T_PIN;       get_character(scanner);  break;
@@ -322,6 +329,17 @@ static void get_special(UniformScanner *scanner) {
     case '!':   scanner->current_token.code = T_BANG;      get_character(scanner);  break;
     case '(':   scanner->current_token.code = T_OPEN_PAREN;  get_character(scanner);  break;
     case ')':   scanner->current_token.code = T_CLOSE_PAREN; get_character(scanner);  break;
+    case '|':
+      scanner->current_token.code = T_PIPE;
+      get_character(scanner);
+      if (scanner->current_char == '>') {
+        scanner->current_token.code = T_PIPE_OPERATOR;
+        get_character(scanner);
+      }
+      break;
+    case '>':   scanner->current_token.code = T_GREATER_THAN;  get_character(scanner);  break;
+    case '<':   scanner->current_token.code = T_LESS_THAN;     get_character(scanner);  break;
+    case '~':   scanner->current_token.code = T_TILDE;         get_character(scanner);  break;
     default:
       UniformLogger.log_info("Scanner::get_special(status: errored)");
       scanner->errored = 1;
