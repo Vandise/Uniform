@@ -1,3 +1,7 @@
 @import("imports/author")
-module CMS
+module UniformTokens
+  42 0.42
+  . = { } [ ] + - * / ^ : ; , ? ! ( ) | < > ~ %
+  |> ->
+  func struct case return
 end

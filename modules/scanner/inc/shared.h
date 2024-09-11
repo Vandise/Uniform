@@ -88,6 +88,7 @@ typedef struct UniformScannerStruct {
 
 struct UniformScannerModuleStruct {
   const signed int version;
+  void (*set_log_level)(int);
 
   UniformScanner* (*init)(const char*);
   void (*close)(UniformScanner*);

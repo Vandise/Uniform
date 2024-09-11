@@ -14,6 +14,7 @@ static void get_word(UniformScanner* scanner, int is_constant);
 static void get_string(UniformScanner* scanner);
 static void get_numeric(UniformScanner* scanner);
 static void accumulate_value(UniformScanner *scanner, double *valuep);
+static void set_log_level(int log_level);
 
 // ============================
 //        Implementation
@@ -361,6 +362,10 @@ static void close(UniformScanner *scanner) {
   free(scanner);
 }
 
+static void set_log_level(int log_level) {
+  UniformLogger.log_level = log_level;
+}
+
 // ============================
 //            Module
 // ============================
@@ -369,5 +374,6 @@ const struct UniformScannerModuleStruct UniformScannerModule = {
   .version = UNIFORM_SCANNER_VERSION,
   .init = init,
   .get_token = get_token,
-  .close = close
+  .close = close,
+  .set_log_level = set_log_level
 };
