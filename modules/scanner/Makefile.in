@@ -31,7 +31,7 @@ scanner_install:
 scanner_module: $(SCANNER_OBJECTS)
 
 $(SCANNER_DIR)/obj/%.o: $(SCANNER_DIR)/src/%.c
-	$(CC) $(CFLAGS) $(ADDFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -c $< -o $@
 
 scanner_library:
 	$(CC) $(SHAREDFLAG) $(SCANNER_OBJECTS) $(LOGGER_LIB_NAME) -lm -o $(SCANNER_LIB_NAME)

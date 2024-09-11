@@ -22,7 +22,7 @@ preprocessor_install:
 preprocessor_module: $(PREPROCESSOR_OBJECTS)
 
 $(PREPROCESSOR_DIR)/obj/%.o: $(PREPROCESSOR_DIR)/src/%.c
-	$(CC) $(CFLAGS) $(ADDFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -c $< -o $@
 
 preprocessor_library:
 	$(ARCHIVER) rcs $(PREPROCESSOR_LIB_NAME) $(PREPROCESSOR_OBJECTS) $(LOGGER_LIB_NAME)
