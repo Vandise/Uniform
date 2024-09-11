@@ -15,10 +15,14 @@
 
 describe("Preprocessor Test Suite", preprocessor_test_suite)
   context(".init")
-    UniformPreprocessor* preprocessor = UniformPreprocessorModule.init(SCANNER_LIB);
+    UniformPreprocessor* preprocessor = UniformPreprocessorModule.init(SCANNER_LIB, UNIFORM_PREPROCESSOR_EMIT);
 
-    it("sets the scanner module structure")
+    it("finds the scanner module from the dynamic library")
       expect(preprocessor->scanner_module->version) to equal(100)
+    end
+
+    it("sets the emit configuration")
+      expect(preprocessor->emit) to equal(1)
     end
 
     UniformPreprocessorModule.close(preprocessor);
