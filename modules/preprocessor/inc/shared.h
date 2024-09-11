@@ -4,12 +4,15 @@
 #include <dlfcn.h>
 #include <limits.h> // PATH_MAX
 #include <stdlib.h>
+#include <time.h>
 
 #include "uniform/scanner/shared.h"
 
 #define UNIFORM_PREPROCESSOR_VERSION 100
 #define UNIFORM_PREPROCESSOR_PASSTHROUGH 0
 #define UNIFORM_PREPROCESSOR_EMIT 1
+#define UNIFORM_FILE_EXTENSION ".u"
+#define EMIT_TOKEN(s) fputs(s, preprocessor->emit_file);
 
 typedef struct UniformPreprocessorStruct UniformPreprocessor;
 
@@ -23,9 +26,11 @@ typedef struct UniformPreprocessorStruct {
   void* scanner_library_handle;
   struct UniformScannerModuleStruct* scanner_module;
 
+  FILE *emit_file;
+  char emit_file_name[PATH_MAX];
+
   int n_macro_size;
   int n_macro_used;
-
   UniformMacro* macros;
 } UniformPreprocessor;
 
@@ -43,7 +48,12 @@ struct UniformMacrosModuleStruct {
   void (*import_macro)(UniformPreprocessor*, UniformScanner*);
 };
 
+struct UniformTokenEmitterModuleStruct {
+  void (*emit_token)(UniformPreprocessor*, UniformScanner*);
+};
+
 extern struct UniformPreprocessorModuleStruct UniformPreprocessorModule;
 extern struct UniformMacrosModuleStruct UniformMacrosModule;
+extern struct UniformTokenEmitterModuleStruct UniformTokenEmitterModule;
 
 #endif

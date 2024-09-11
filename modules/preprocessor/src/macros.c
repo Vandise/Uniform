@@ -13,7 +13,7 @@ static void import_macro(UniformPreprocessor *preprocessor, UniformScanner *scan
 // ============================
 
 static int file_exists(const char* filename) {
-  char buffer[strlen(filename) + 255];
+  char buffer[PATH_MAX];
   char* bufferp = buffer;
 
   realpath(filename, bufferp);
@@ -46,11 +46,27 @@ static int get_file_real_path(const char* s, char* buffer) {
 
 static void import_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner) {
   UniformLogger.log_info("Macros::import_macro");
-  /*
-  char buffer[PATH_MAX];
-  get_file_real_path("modules/preprocessor/test/files/import.u", &buffer);
-  UniformLogger.log_info("Macros::import_macro(realpath: %s)", buffer);
-  */
+
+  char path_buffer[PATH_MAX];
+
+  preprocessor->scanner_module->get_token(scanner); // T_OPEN_PAREN
+  preprocessor->scanner_module->get_token(scanner); // T_STRING
+
+  if (scanner->current_token.code != T_STRING) {
+    UniformLogger.log_fatal("Macros::import_macro(error: invalid macro token. expected String)");
+  }
+
+  get_file_real_path(scanner->source_name, path_buffer);
+  
+  strcat(path_buffer, scanner->current_token.literal.value.string);
+  strcat(path_buffer, UNIFORM_FILE_EXTENSION);
+
+  UniformLogger.log_info("Macros::import_macro(file: %s)", path_buffer);
+
+  preprocessor->scanner_module->get_token(scanner); // T_CLOSE_PAREN
+  preprocessor->scanner_module->get_token(scanner); // T_NEWLINE
+
+  UniformPreprocessorModule.process(preprocessor, path_buffer);
 }
 
 // ============================

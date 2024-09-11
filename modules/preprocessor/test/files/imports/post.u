@@ -1,2 +1,3 @@
 module Post
+  "this is a string"
 end

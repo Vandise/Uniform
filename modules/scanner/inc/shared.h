@@ -7,6 +7,7 @@
 #include <math.h>
 #include <float.h>
 #include <errno.h>
+#include <limits.h>
 #include "uniform/logger/shared.h"
 #include "uniform/scanner/tokens.h"
 
@@ -57,7 +58,7 @@ typedef struct UniformScannerTokenStruct {
   unsigned int level;
 
   char *tokenp;
-  char source_name[64];
+  char source_name[PATH_MAX];
   char word_string[1024];
   char token_string[1024];
 
@@ -74,7 +75,7 @@ typedef struct UniformScannerStruct {
   UNIFORM_CHAR_CODE char_table[256];
 
   char source_buffer[1024];
-  char source_name[64];
+  char source_name[PATH_MAX];
   FILE *source_file;
 
   char *source_bufferp;

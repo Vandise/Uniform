@@ -5,6 +5,8 @@
 // ============================
 
 static void init_uniform_chartable(UniformScanner* scanner);
+static char* hash(char *str, int key);
+
 static UniformPreprocessor* init(const char *library, int emit);
 static void process(UniformPreprocessor *preprocessor, const char *file_name);
 static void execute_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner);
@@ -30,6 +32,12 @@ static void init_uniform_chartable(UniformScanner* scanner) {
   scanner->char_table[EOF_CHAR] = EOF_CHAR_CODE;
 }
 
+static char* hash(char *str, int key) {
+  for(int i = 0; i < strlen(str); i++){
+    str[i] ^= key; 
+  }
+  return str;
+}
 
 static UniformPreprocessor* init(const char *library, int emit) {
   UniformLogger.log_info("Preprocessor::init(library: %s, emit: %d)", library, emit);
@@ -50,6 +58,18 @@ static UniformPreprocessor* init(const char *library, int emit) {
   preprocessor->n_macro_size = 10;
   preprocessor->n_macro_used = 0;
   preprocessor->macros = malloc(sizeof(UniformMacro*) * 10);
+
+  if (emit) {
+    char time_buffer[20];
+    time_t now = time(NULL);
+    strftime(time_buffer, 20, "%Y%m%d%H", localtime(&now));
+  
+    strcpy(preprocessor->emit_file_name, ".tmp/");
+    strcat(preprocessor->emit_file_name, time_buffer);
+    strcat(preprocessor->emit_file_name, UNIFORM_FILE_EXTENSION);
+
+    preprocessor->emit_file = fopen(preprocessor->emit_file_name, "a+");
+  }
 
   return preprocessor;
 }
@@ -72,9 +92,10 @@ void register_macro(UniformPreprocessor* preprocessor, const char* macro_name, v
 }
 
 static void process(UniformPreprocessor *preprocessor, const char *file_name) {
-  UniformLogger.log_info("Preprocessor::process(file: %s)", file_name);
+  UniformLogger.log_info("Preprocessor::process(file: %s, emit file: %s)", file_name, preprocessor->emit_file_name);
 
   UniformScanner *scanner = preprocessor->scanner_module->init(file_name);
+
   if (!scanner->errored) {
     init_uniform_chartable(scanner);
     do {
@@ -82,21 +103,40 @@ static void process(UniformPreprocessor *preprocessor, const char *file_name) {
       if (scanner->current_token.code == T_MACRO) {
         execute_macro(preprocessor, scanner);
       } else {
-        // todo: emit token based off of emit setting, or passthrough
+        UniformTokenEmitterModule.emit_token(preprocessor, scanner);
       }
     } while(scanner->current_token.code != T_END_OF_FILE);
   }
+
   free(scanner);
 }
 
 static void execute_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner) {
   preprocessor->scanner_module->get_token(scanner);
 
+  UniformLogger.log_info("Preprocessor::execute_macro(macro: %s)", scanner->current_token.token_string);
+
   if (scanner->current_token.code != T_IDENTIFIER) {
-    UniformLogger.log_fatal("Preprocessor::process(error: invalid macro %s)", scanner->current_token.token_string);
+    UniformLogger.log_fatal("Preprocessor::execute_macro(error: invalid macro %s)", scanner->current_token.token_string);
+    // todo: error
   }
 
-  UniformLogger.log_info("Preprocessor::process(macro: %s)", scanner->current_token.token_string);
+  UniformMacro macro;
+  int macro_found = 0;
+  for (int i = 0; i < preprocessor->n_macro_used; i++) {
+    if (strcmp(preprocessor->macros[i].name, scanner->current_token.token_string) == 0) {
+      macro_found = 1;
+      macro = preprocessor->macros[i];
+      break;
+    }
+  }
+
+  if (macro_found) {
+    macro.handle(preprocessor, scanner);
+    return;
+  }
+
+  UniformLogger.log_fatal("Preprocessor::execute_macro(error: macro %s not found)", scanner->current_token.token_string);
 }
 
 static void close(UniformPreprocessor* preprocessor) {
@@ -111,6 +151,10 @@ static void close(UniformPreprocessor* preprocessor) {
 
   if (preprocessor->macros != NULL) {
     free(preprocessor->macros);
+  }
+
+  if (preprocessor->emit) {
+    fclose(preprocessor->emit_file);
   }
 
   free(preprocessor);
