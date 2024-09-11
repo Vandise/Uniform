@@ -8,6 +8,7 @@ static void init_uniform_chartable(UniformScanner* scanner);
 static UniformPreprocessor* init(const char *library, int emit);
 static void process(UniformPreprocessor *preprocessor, const char *file_name);
 static void execute_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner);
+void register_macro(UniformPreprocessor* preprocessor, const char* macro, void(*action)(UniformPreprocessor*, UniformScanner*));
 static void close(UniformPreprocessor* preprocessor);
 
 // ============================
@@ -46,7 +47,28 @@ static UniformPreprocessor* init(const char *library, int emit) {
   preprocessor->scanner_module = (struct UniformScannerModuleStruct*)dlsym(handle, "UniformScannerModule");
   preprocessor->scanner_module->set_log_level(UniformPreprocessorModule.log_level);
 
+  preprocessor->n_macro_size = 10;
+  preprocessor->n_macro_used = 0;
+  preprocessor->macros = malloc(sizeof(UniformMacro*) * 10);
+
   return preprocessor;
+}
+
+void register_macro(UniformPreprocessor* preprocessor, const char* macro_name, void(*action)(UniformPreprocessor*, UniformScanner*)) {
+  UniformLogger.log_info("Preprocessor::register_macro(name: %s)", macro_name);
+
+  if (preprocessor->n_macro_used == preprocessor->n_macro_size) {
+    preprocessor->n_macro_size = (preprocessor->n_macro_size * 3) / 2 + 8;
+    preprocessor->macros = (UniformMacro*)(realloc(
+      preprocessor->macros, preprocessor->n_macro_size * sizeof(UniformMacro)
+    ));
+  }
+
+  UniformMacro macro;
+  strcpy(macro.name, macro_name);
+  macro.handle = action;
+
+  preprocessor->macros[preprocessor->n_macro_used++] = macro;
 }
 
 static void process(UniformPreprocessor *preprocessor, const char *file_name) {
@@ -87,6 +109,10 @@ static void close(UniformPreprocessor* preprocessor) {
   preprocessor->scanner_module = NULL;
   preprocessor->scanner_library_handle = NULL;
 
+  if (preprocessor->macros != NULL) {
+    free(preprocessor->macros);
+  }
+
   free(preprocessor);
 }
 
@@ -98,6 +124,7 @@ struct UniformPreprocessorModuleStruct UniformPreprocessorModule = {
   .version = UNIFORM_PREPROCESSOR_VERSION,
   .log_level = UNIFORM_LOG_INFO,
   .init = init,
+  .register_macro = register_macro,
   .process = process,
-  .close = close
+  .close = close,
 };

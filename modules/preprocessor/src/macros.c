@@ -45,7 +45,12 @@ static int get_file_real_path(const char* s, char* buffer) {
 }
 
 static void import_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner) {
-  
+  UniformLogger.log_info("Macros::import_macro");
+  /*
+  char buffer[PATH_MAX];
+  get_file_real_path("modules/preprocessor/test/files/import.u", &buffer);
+  UniformLogger.log_info("Macros::import_macro(realpath: %s)", buffer);
+  */
 }
 
 // ============================

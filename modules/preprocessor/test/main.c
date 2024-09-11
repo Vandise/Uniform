@@ -38,6 +38,15 @@ describe("Preprocessor Test Suite", preprocessor_test_suite)
     end
   end
 
+  context(".register_macro")
+    it("adds the macro to the macros list")
+      UniformPreprocessorModule.register_macro(preprocessor, "import", UniformMacrosModule.import_macro);
+      expect(preprocessor->n_macro_size) to equal(10)
+      expect(preprocessor->n_macro_used) to equal(1)
+      expect(preprocessor->macros[0].name) to equal("import")
+    end
+  end
+
   context(".process")
     it("emits a compiled set of tokens to the tmp directory")
       UniformPreprocessorModule.process(preprocessor, "modules/preprocessor/test/files/import.u");
