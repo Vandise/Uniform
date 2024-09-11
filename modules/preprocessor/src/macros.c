@@ -6,10 +6,29 @@
 
 static char* get_file_real_path(const char* s);
 static void import_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner);
+static char* uniform_strndup(const char *s, size_t n);
+size_t uniform_strnlen(const char *src, size_t n);
 
 // ============================
 //        Implementation
 // ============================
+
+size_t uniform_strnlen(const char *src, size_t n) {
+  size_t len = 0;
+  while (len < n && src[len]) { len++; }
+  return len;
+}
+
+
+static char* uniform_strndup(const char *s, size_t n) {
+  size_t len = uniform_strnlen(s, n);
+  char *p = malloc(len + 1);
+  if (p) {
+    memcpy(p, s, len);
+    p[len] = '\0';
+  }
+  return p;
+}
 
 static char* get_file_real_path(const char* s) {
 /*
@@ -31,7 +50,7 @@ static char* get_file_real_path(const char* s) {
   }
 */
   char *last_slash = strrchr(s, '/');
-  char *buffer = strndup(s, ((last_slash + 1) - s));
+  char *buffer = uniform_strndup(s, ((last_slash + 1) - s));
   return buffer;
 }
 
