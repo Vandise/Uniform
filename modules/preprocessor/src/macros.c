@@ -13,7 +13,7 @@ static void import_macro(UniformPreprocessor *preprocessor, UniformScanner *scan
 // ============================
 
 static int file_exists(const char* filename) {
-  char buffer[PATH_MAX];
+  char buffer[FILE_PATH_MAX];
   char* bufferp = buffer;
 
   realpath(filename, bufferp);
@@ -47,7 +47,7 @@ static int get_file_real_path(const char* s, char* buffer) {
 static void import_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner) {
   UniformLogger.log_info("Macros::import_macro");
 
-  char path_buffer[PATH_MAX];
+  char path_buffer[FILE_PATH_MAX];
 
   preprocessor->scanner_module->get_token(scanner); // T_OPEN_PAREN
   preprocessor->scanner_module->get_token(scanner); // T_STRING

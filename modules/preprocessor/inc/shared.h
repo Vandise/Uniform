@@ -6,7 +6,7 @@
 #include <time.h>
 
 #include "uniform/scanner/shared.h"
-#define PATH_MAX 1024
+#define FILE_PATH_MAX 1024
 #define UNIFORM_PREPROCESSOR_VERSION 100
 #define UNIFORM_PREPROCESSOR_PASSTHROUGH 0
 #define UNIFORM_PREPROCESSOR_EMIT 1
@@ -26,7 +26,7 @@ typedef struct UniformPreprocessorStruct {
   struct UniformScannerModuleStruct* scanner_module;
 
   FILE *emit_file;
-  char emit_file_name[PATH_MAX];
+  char emit_file_name[FILE_PATH_MAX];
 
   int n_macro_size;
   int n_macro_used;
