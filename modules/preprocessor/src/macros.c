@@ -12,7 +12,13 @@ static void import_macro(UniformPreprocessor *preprocessor, UniformScanner *scan
 // ============================
 
 static char* get_file_real_path(const char* s) {
-  char* buffer = realpath(s, NULL);
+
+  #if defined(_WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
+    char* buffer = malloc(FILE_PATH_MAX);
+    _fullpath(buffer, s, FILE_PATH_MAX);
+  #else
+    char* buffer = realpath(s, NULL);
+  #endif
 
   int size = strlen(buffer);
   for (int i = size - 1; i > 0; i--) {
