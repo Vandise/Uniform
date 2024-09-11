@@ -2,12 +2,11 @@
 #define __UNIFORM_PREPROCESSORH 1
 
 #include <dlfcn.h>
-#include <limits.h> // PATH_MAX
 #include <stdlib.h>
 #include <time.h>
 
 #include "uniform/scanner/shared.h"
-
+#define PATH_MAX 1024
 #define UNIFORM_PREPROCESSOR_VERSION 100
 #define UNIFORM_PREPROCESSOR_PASSTHROUGH 0
 #define UNIFORM_PREPROCESSOR_EMIT 1

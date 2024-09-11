@@ -7,10 +7,10 @@
 #include <math.h>
 #include <float.h>
 #include <errno.h>
-#include <limits.h>
 #include "uniform/logger/shared.h"
 #include "uniform/scanner/tokens.h"
 
+#define PATH_MAX 1024
 #define EOF_CHAR     '\x7f'
 #define NEWLINE_CHAR '\n'
 #define CARRIAGE_RETURN_CHAR '\r'
