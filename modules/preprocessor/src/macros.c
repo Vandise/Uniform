@@ -12,6 +12,8 @@ static void import_macro(UniformPreprocessor *preprocessor, UniformScanner *scan
 // ============================
 
 static char* get_file_real_path(const char* s) {
+/*
+  TODO: broken on windows _fullpath / realpath undefined with msys2
 
   #if defined(_WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
     char* buffer = malloc(FILE_PATH_MAX);
@@ -27,7 +29,9 @@ static char* get_file_real_path(const char* s) {
     }
     buffer[i] = '\0';
   }
-
+*/
+  char *last_slash = strrchr(s, '/');
+  char *buffer = strndup(s, ((last_slash + 1) - s));
   return buffer;
 }
 
