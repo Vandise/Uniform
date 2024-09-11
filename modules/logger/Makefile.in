@@ -20,7 +20,7 @@ logger_install:
 logger_module: $(LOGGER_OBJECTS)
 
 $(LOGGER_DIR)/obj/%.o: $(LOGGER_DIR)/src/%.c
-	$(CC) $(CFLAGS) $(ADDFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -c $< -o $@
 
 logger_library:
 	$(ARCHIVER) rcs $(LOGGER_LIB_NAME) $(LOGGER_OBJECTS)
