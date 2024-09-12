@@ -31,27 +31,20 @@ static char* uniform_strndup(const char *s, size_t n) {
 }
 
 static char* get_file_real_path(const char* s) {
-/*
-  TODO: broken on windows _fullpath / realpath undefined with msys2
+  //
+  // todo: expand ..'s
+  //
+  char *path_buffer = malloc(FILE_PATH_MAX);
+  getcwd(path_buffer, FILE_PATH_MAX);
 
-  #if defined(_WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
-    char* buffer = malloc(FILE_PATH_MAX);
-    _fullpath(buffer, s, FILE_PATH_MAX);
-  #else
-    char* buffer = realpath(s, NULL);
-  #endif
-
-  int size = strlen(buffer);
-  for (int i = size - 1; i > 0; i--) {
-    if (buffer[i] == '/') {
-      break;
-    }
-    buffer[i] = '\0';
-  }
-*/
   char *last_slash = strrchr(s, '/');
-  char *buffer = uniform_strndup(s, ((last_slash + 1) - s));
-  return buffer;
+  char *file_path = uniform_strndup(s, ((last_slash + 1) - s));
+
+  strcat(path_buffer, file_path);
+
+  free(file_path);
+
+  return path_buffer;
 }
 
 static void import_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner) {

@@ -11,7 +11,7 @@ static UniformPreprocessor* init(const char *library, int emit);
 static void process(UniformPreprocessor *preprocessor, const char *file_name);
 static void execute_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner);
 void register_macro(UniformPreprocessor* preprocessor, const char* macro, void(*action)(UniformPreprocessor*, UniformScanner*));
-static void close(UniformPreprocessor* preprocessor);
+static void uniform_close(UniformPreprocessor* preprocessor);
 
 // ============================
 //        Implementation
@@ -139,7 +139,7 @@ static void execute_macro(UniformPreprocessor *preprocessor, UniformScanner *sca
   UniformLogger.log_fatal("Preprocessor::execute_macro(error: macro %s not found)", scanner->current_token.token_string);
 }
 
-static void close(UniformPreprocessor* preprocessor) {
+static void uniform_close(UniformPreprocessor* preprocessor) {
   UniformLogger.log_info("Preprocessor::close");
 
   void *handle = preprocessor->scanner_library_handle;
@@ -170,5 +170,5 @@ struct UniformPreprocessorModuleStruct UniformPreprocessorModule = {
   .init = init,
   .register_macro = register_macro,
   .process = process,
-  .close = close,
+  .close = uniform_close,
 };

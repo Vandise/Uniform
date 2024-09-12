@@ -4,6 +4,7 @@
 #include <dlfcn.h>
 #include <stdlib.h>
 #include <time.h>
+#include <unistd.h>
 
 #include "uniform/scanner/shared.h"
 #define FILE_PATH_MAX 1024
