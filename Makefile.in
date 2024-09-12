@@ -31,6 +31,7 @@ else
 endif
 
 -include modules/logger/Makefile.in
+-include modules/file/Makefile.in
 -include modules/scanner/Makefile.in
 -include modules/preprocessor/Makefile.in
 

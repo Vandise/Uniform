@@ -6,8 +6,9 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "uniform/file/shared.h"
 #include "uniform/scanner/shared.h"
-#define FILE_PATH_MAX 1024
+
 #define UNIFORM_PREPROCESSOR_VERSION 100
 #define UNIFORM_PREPROCESSOR_PASSTHROUGH 0
 #define UNIFORM_PREPROCESSOR_EMIT 1

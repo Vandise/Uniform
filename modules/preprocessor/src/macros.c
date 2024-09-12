@@ -4,48 +4,11 @@
 //          Forwards
 // ============================
 
-static char* get_file_real_path(const char* s);
 static void import_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner);
-static char* uniform_strndup(const char *s, size_t n);
-static size_t uniform_strnlen(const char *src, size_t n);
 
 // ============================
 //        Implementation
 // ============================
-
-static size_t uniform_strnlen(const char *src, size_t n) {
-  size_t len = 0;
-  while (len < n && src[len]) { len++; }
-  return len;
-}
-
-
-static char* uniform_strndup(const char *s, size_t n) {
-  size_t len = uniform_strnlen(s, n);
-  char *p = malloc(len + 1);
-  if (p) {
-    memcpy(p, s, len);
-    p[len] = '\0';
-  }
-  return p;
-}
-
-static char* get_file_real_path(const char* s) {
-  //
-  // todo: expand ..'s
-  //
-  char *path_buffer = malloc(FILE_PATH_MAX);
-  getcwd(path_buffer, FILE_PATH_MAX);
-
-  char *last_slash = strrchr(s, '/');
-  char *file_path = uniform_strndup(s, ((last_slash + 1) - s));
-
-  strcat(path_buffer, file_path);
-
-  free(file_path);
-
-  return path_buffer;
-}
 
 static void import_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner) {
   UniformLogger.log_info("Macros::import_macro");
@@ -59,7 +22,7 @@ static void import_macro(UniformPreprocessor *preprocessor, UniformScanner *scan
     UniformLogger.log_fatal("Macros::import_macro(error: invalid macro token. expected String)");
   }
 
-  char* buffer = get_file_real_path(scanner->source_name);
+  char* buffer = UniformFileUtil.get_file_path(scanner->source_name);
 
   strcpy(path_buffer, buffer);
   strcat(path_buffer, scanner->current_token.literal.value.string);

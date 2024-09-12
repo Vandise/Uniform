@@ -1,0 +1,26 @@
+FILE_UTIL_DIR := modules/file
+FILE_UTIL_LIB_NAME := lib/libuniformfileutil.$(ARCHIVE_EXT)
+
+FILE_UTIL_FILES        := $(wildcard $(FILE_UTIL_DIR)/src/*.c)
+FILE_UTIL_HEADERS      := $(wildcard $(FILE_UTIL_DIR)/inc/*.h)
+
+FILE_UTIL_OBJECTS      := $(patsubst $(FILE_UTIL_DIR)/src/%.c, $(FILE_UTIL_DIR)/obj/%.o, $(FILE_UTIL_FILES))
+
+fileutil: file_util_mkdir file_util_add_headers file_util_module file_util_library
+
+file_util_mkdir:
+	mkdir -p $(SYSINCDIR)/uniform/file
+
+file_util_add_headers:
+	cp $(FILE_UTIL_HEADERS) $(SYSINCDIR)/uniform/file
+
+file_util_install:
+	cp $(FILE_UTIL_LIB_NAME) $(SYSLIBDIR)
+
+file_util_module: $(FILE_UTIL_OBJECTS)
+
+$(FILE_UTIL_DIR)/obj/%.o: $(FILE_UTIL_DIR)/src/%.c
+	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -c $< -o $@
+
+file_util_library:
+	$(ARCHIVER) rcs $(FILE_UTIL_LIB_NAME) $(FILE_UTIL_OBJECTS)

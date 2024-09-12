@@ -23,6 +23,7 @@ jobs:
     - name: make utilities
       run: |
         make logger
+        make fileutil
 
     - name: make scanner
       run: make scanner

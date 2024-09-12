@@ -59,6 +59,7 @@ jobs:
     - name: make utilities
       run: |
         C:\tools\msys64\usr\bin\bash -lc "make logger"
+        C:\tools\msys64\usr\bin\bash -lc "make fileutil"
       env:
         HOME: ${{ runner.workspace }}/uniform
         MINGW_INSTALLS: ${{ matrix.task.installs }}

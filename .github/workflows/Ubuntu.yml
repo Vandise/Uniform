@@ -20,6 +20,7 @@ jobs:
     - name: make utilities
       run: |
         sudo make logger
+        sudo make fileutil
 
     - name: make scanner
       run: sudo make scanner
