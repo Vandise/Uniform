@@ -5,7 +5,6 @@
 // ============================
 
 static void init_uniform_chartable(UniformScanner* scanner);
-static char* hash(char *str, int key);
 
 static UniformPreprocessor* init(const char *library, int emit);
 static void process(UniformPreprocessor *preprocessor, const char *file_name);
@@ -30,13 +29,6 @@ static void init_uniform_chartable(UniformScanner* scanner) {
   scanner->char_table[CARRIAGE_RETURN_CHAR] = CARRIAGE_RETURN_CHAR_CODE;
   scanner->char_table['_'] = UNDERSCORE_CHAR_CODE;
   scanner->char_table[EOF_CHAR] = EOF_CHAR_CODE;
-}
-
-static char* hash(char *str, int key) {
-  for(int i = 0; i < strlen(str); i++){
-    str[i] ^= key; 
-  }
-  return str;
 }
 
 static UniformPreprocessor* init(const char *library, int emit) {
