@@ -7,13 +7,13 @@
 static char* get_file_real_path(const char* s);
 static void import_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner);
 static char* uniform_strndup(const char *s, size_t n);
-size_t uniform_strnlen(const char *src, size_t n);
+static size_t uniform_strnlen(const char *src, size_t n);
 
 // ============================
 //        Implementation
 // ============================
 
-size_t uniform_strnlen(const char *src, size_t n) {
+static size_t uniform_strnlen(const char *src, size_t n) {
   size_t len = 0;
   while (len < n && src[len]) { len++; }
   return len;
