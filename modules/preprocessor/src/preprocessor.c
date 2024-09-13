@@ -8,7 +8,7 @@ static void init_uniform_chartable(UniformScanner* scanner);
 
 static UniformPreprocessor* init(const char *library, int emit);
 static void process(UniformPreprocessor *preprocessor, const char *file_name);
-static void execute_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner);
+static void process_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner);
 void register_macro(UniformPreprocessor* preprocessor, const char* macro, void(*action)(UniformPreprocessor*, UniformScanner*));
 static void uniform_close(UniformPreprocessor* preprocessor);
 
@@ -93,7 +93,7 @@ static void process(UniformPreprocessor *preprocessor, const char *file_name) {
     do {
       preprocessor->scanner_module->get_token(scanner);
       if (scanner->current_token.code == T_MACRO) {
-        execute_macro(preprocessor, scanner);
+        process_macro(preprocessor, scanner);
       } else {
         UniformTokenEmitterModule.emit_token(preprocessor, scanner);
       }
@@ -103,13 +103,13 @@ static void process(UniformPreprocessor *preprocessor, const char *file_name) {
   free(scanner);
 }
 
-static void execute_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner) {
+static void process_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner) {
   preprocessor->scanner_module->get_token(scanner);
 
-  UniformLogger.log_info("Preprocessor::execute_macro(macro: %s)", scanner->current_token.token_string);
+  UniformLogger.log_info("Preprocessor::process_macro(macro: %s)", scanner->current_token.token_string);
 
   if (scanner->current_token.code != T_IDENTIFIER) {
-    UniformLogger.log_fatal("Preprocessor::execute_macro(error: invalid macro %s)", scanner->current_token.token_string);
+    UniformLogger.log_fatal("Preprocessor::process_macro(error: invalid macro %s)", scanner->current_token.token_string);
     // todo: error
   }
 
@@ -128,7 +128,7 @@ static void execute_macro(UniformPreprocessor *preprocessor, UniformScanner *sca
     return;
   }
 
-  UniformLogger.log_fatal("Preprocessor::execute_macro(error: macro %s not found)", scanner->current_token.token_string);
+  UniformLogger.log_fatal("Preprocessor::process_macro(error: macro %s not found)", scanner->current_token.token_string);
 }
 
 static void uniform_close(UniformPreprocessor* preprocessor) {
