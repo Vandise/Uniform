@@ -7,6 +7,7 @@
 #include <string.h>
 
 #define FILE_PATH_MAX 1024
+#define FILE_PATH_DELIMITER "/" // todo: windows
 
 typedef struct UniformFileUtilModuleStruct {
   char* (*get_file_path)(const char*);

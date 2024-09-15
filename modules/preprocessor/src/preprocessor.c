@@ -95,7 +95,10 @@ static void process(UniformPreprocessor *preprocessor, const char *file_name) {
       if (scanner->current_token.code == T_MACRO) {
         process_macro(preprocessor, scanner);
       } else {
-        UniformTokenEmitterModule.emit_token(preprocessor, scanner);
+        // todo: execute macro if identifier and defined
+        if (preprocessor->emit) {
+          UniformTokenEmitterModule.emit_token(preprocessor, scanner);
+        }
       }
     } while(scanner->current_token.code != T_END_OF_FILE);
   }
