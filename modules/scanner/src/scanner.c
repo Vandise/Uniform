@@ -29,7 +29,7 @@ static UniformScanner* init(const char *file_name) {
 
   scanner->current_char = '\0';
   scanner->source_bufferp = NULL;
-  scanner->line_number = 0;
+  scanner->line_number = -1;
   scanner->level = 0;
   scanner->buffer_offset = 0;
   scanner->errored = 0;
@@ -61,10 +61,11 @@ static int open_source_file(UniformScanner *scanner) {
 }
 
 static int get_source_line(UniformScanner *scanner) {
-  UniformLogger.log_info("Scanner::get_source_line");
+  scanner->line_number += 1;
+
+  UniformLogger.log_info("Scanner::get_source_line(line: %d)", scanner->line_number);
 
   if (scanner != NULL && fgets(scanner->source_buffer, UNIFORM_SCANNER_MAX_SOURCE_LINE, scanner->source_file) != NULL) {
-    scanner->line_number += 1;
     return 1;
   }
   return 0;

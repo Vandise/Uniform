@@ -4,13 +4,13 @@
 //          Forwards
 // ============================
 
-static void import_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner);
+static int import_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner, UniformScanner *initializer);
 
 // ============================
 //        Implementation
 // ============================
 
-static void import_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner) {
+static int import_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner, UniformScanner *initializer) {
   UniformLogger.log_info("Macros::import_macro");
 
   char path_buffer[FILE_PATH_MAX];
@@ -20,6 +20,7 @@ static void import_macro(UniformPreprocessor *preprocessor, UniformScanner *scan
 
   if (scanner->current_token.code != T_STRING) {
     UniformLogger.log_fatal("Macros::import_macro(error: invalid macro token. expected String)");
+    return 1;
   }
 
   char* buffer = UniformFileUtil.get_file_path(scanner->source_name);
@@ -31,11 +32,14 @@ static void import_macro(UniformPreprocessor *preprocessor, UniformScanner *scan
   UniformLogger.log_info("Macros::import_macro(file: %s)", path_buffer);
 
   preprocessor->scanner_module->get_token(scanner); // T_CLOSE_PAREN
+
+  UniformPreprocessorModule.process(preprocessor, path_buffer, scanner);
+
   preprocessor->scanner_module->get_token(scanner); // T_NEWLINE
 
-  UniformPreprocessorModule.process(preprocessor, path_buffer);
-
   free(buffer);
+
+  return 0;
 }
 
 // ============================

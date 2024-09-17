@@ -1,0 +1,26 @@
+ERROR_UTIL_DIR := modules/error
+ERROR_UTIL_LIB_NAME := lib/libuniformerrorutil.$(ARCHIVE_EXT)
+
+ERROR_UTIL_FILES        := $(wildcard $(ERROR_UTIL_DIR)/src/*.c)
+ERROR_UTIL_HEADERS      := $(wildcard $(ERROR_UTIL_DIR)/inc/*.h)
+
+ERROR_UTIL_OBJECTS      := $(patsubst $(ERROR_UTIL_DIR)/src/%.c, $(ERROR_UTIL_DIR)/obj/%.o, $(ERROR_UTIL_FILES))
+
+errorutil: error_util_mkdir error_util_add_headers error_util_module error_util_library
+
+error_util_mkdir:
+	mkdir -p $(SYSINCDIR)/uniform/error
+
+error_util_add_headers:
+	cp $(ERROR_UTIL_HEADERS) $(SYSINCDIR)/uniform/error
+
+error_util_install:
+	cp $(ERROR_UTIL_LIB_NAME) $(SYSLIBDIR)
+
+error_util_module: $(ERROR_UTIL_OBJECTS)
+
+$(ERROR_UTIL_DIR)/obj/%.o: $(ERROR_UTIL_DIR)/src/%.c
+	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -c $< -o $@
+
+error_util_library:
+	$(ARCHIVER) rcs $(ERROR_UTIL_LIB_NAME) $(ERROR_UTIL_OBJECTS)

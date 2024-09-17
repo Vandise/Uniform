@@ -20,16 +20,9 @@ jobs:
     - name: configure
       run: sudo ./configure
 
-    - name: make utilities
+    - name: make all
       run: |
-        make logger
-        make fileutil
-
-    - name: make scanner
-      run: make scanner
-
-    - name: make preprocessor
-      run: make preprocessor
+        make all
 
     - name: run tests
       run: |

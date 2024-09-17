@@ -36,8 +36,8 @@ describe("Scanner Test Suite", scanner_test_suite)
         expect(s->current_char) to equal('\0')
       end
 
-      it("Sets the line number to 0")
-        expect(s->line_number) to equal(0)
+      it("Sets the line number to -1")
+        expect(s->line_number) to equal(-1)
       end
 
       it("Sets the level to 0")

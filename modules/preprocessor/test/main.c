@@ -65,8 +65,12 @@ describe("Preprocessor Test Suite", preprocessor_test_suite)
   context(".process")
     before(before_register_macro)
 
+    it("fails when a file is not found")
+      UniformPreprocessorModule.process(preprocessor, "modules/preprocessor/test/files/dne.u", NULL);
+    end
+
     it("emits a compiled set of tokens to the tmp directory")
-      UniformPreprocessorModule.process(preprocessor, "modules/preprocessor/test/files/import.u");
+      UniformPreprocessorModule.process(preprocessor, "modules/preprocessor/test/files/import.u", NULL);
       // todo: ensure file exists
     end
 

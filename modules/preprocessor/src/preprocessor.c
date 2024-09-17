@@ -7,9 +7,9 @@
 static void init_uniform_chartable(UniformScanner* scanner);
 
 static UniformPreprocessor* init(const char *library, int emit);
-static void process(UniformPreprocessor *preprocessor, const char *file_name);
-static void process_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner);
-void register_macro(UniformPreprocessor* preprocessor, const char* macro, void(*action)(UniformPreprocessor*, UniformScanner*));
+static int process(UniformPreprocessor *preprocessor, const char *file_name, UniformScanner *initializer);
+static int process_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner, UniformScanner *initializer);
+static void register_macro(UniformPreprocessor* preprocessor, const char* macro, int(*action)(UniformPreprocessor*, UniformScanner*, UniformScanner*));
 static void uniform_close(UniformPreprocessor* preprocessor);
 
 // ============================
@@ -66,7 +66,7 @@ static UniformPreprocessor* init(const char *library, int emit) {
   return preprocessor;
 }
 
-void register_macro(UniformPreprocessor* preprocessor, const char* macro_name, void(*action)(UniformPreprocessor*, UniformScanner*)) {
+static void register_macro(UniformPreprocessor* preprocessor, const char* macro_name, int(*action)(UniformPreprocessor*, UniformScanner*, UniformScanner*)) {
   UniformLogger.log_info("Preprocessor::register_macro(name: %s)", macro_name);
 
   if (preprocessor->n_macro_used == preprocessor->n_macro_size) {
@@ -83,17 +83,20 @@ void register_macro(UniformPreprocessor* preprocessor, const char* macro_name, v
   preprocessor->macros[preprocessor->n_macro_used++] = macro;
 }
 
-static void process(UniformPreprocessor *preprocessor, const char *file_name) {
-  UniformLogger.log_info("Preprocessor::process(file: %s, emit file: %s)", file_name, preprocessor->emit_file_name);
+static int process(UniformPreprocessor *preprocessor, const char *file_name, UniformScanner *initializer) {
+  UniformLogger.log_info("Preprocessor::process(file: %s, emit file: %s, initializer: %p)", file_name, preprocessor->emit_file_name, initializer);
 
+  int macro_failed = 0;
   UniformScanner *scanner = preprocessor->scanner_module->init(file_name);
 
   if (!scanner->errored) {
     init_uniform_chartable(scanner);
+
     do {
       preprocessor->scanner_module->get_token(scanner);
       if (scanner->current_token.code == T_MACRO) {
-        process_macro(preprocessor, scanner);
+        macro_failed = process_macro(preprocessor, scanner, initializer);
+        if (macro_failed) { break; }
       } else {
         // todo: execute macro if identifier and defined
         if (preprocessor->emit) {
@@ -101,12 +104,20 @@ static void process(UniformPreprocessor *preprocessor, const char *file_name) {
         }
       }
     } while(scanner->current_token.code != T_END_OF_FILE);
+
+  } else {
+    UniformScanner *es = initializer == NULL ? scanner : initializer;
+
+    UniformErrorUtil.trace_error(UNIFORM_FILE_NOT_FOUND, es->source_name, es->line_number, es->buffer_offset, file_name);
+    return 1;
   }
 
   free(scanner);
+
+  return macro_failed;
 }
 
-static void process_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner) {
+static int process_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner, UniformScanner *initializer) {
   preprocessor->scanner_module->get_token(scanner);
 
   UniformLogger.log_info("Preprocessor::process_macro(macro: %s)", scanner->current_token.token_string);
@@ -127,11 +138,12 @@ static void process_macro(UniformPreprocessor *preprocessor, UniformScanner *sca
   }
 
   if (macro_found) {
-    macro.handle(preprocessor, scanner);
-    return;
+    return macro.handle(preprocessor, scanner, initializer);
   }
 
   UniformLogger.log_fatal("Preprocessor::process_macro(error: macro %s not found)", scanner->current_token.token_string);
+
+  return 1;
 }
 
 static void uniform_close(UniformPreprocessor* preprocessor) {

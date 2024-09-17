@@ -6,6 +6,7 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "uniform/error/shared.h"
 #include "uniform/file/shared.h"
 #include "uniform/scanner/shared.h"
 
@@ -19,7 +20,7 @@ typedef struct UniformPreprocessorStruct UniformPreprocessor;
 
 typedef struct UniformMacroStruct {
   char name[64];
-  void (*handle)(UniformPreprocessor*, UniformScanner*);
+  int (*handle)(UniformPreprocessor*, UniformScanner*, UniformScanner*);
 } UniformMacro;
 
 typedef struct UniformPreprocessorStruct {
@@ -40,13 +41,13 @@ struct UniformPreprocessorModuleStruct {
   int log_level;
 
   UniformPreprocessor* (*init)(const char*, int);
-  void (*register_macro)(UniformPreprocessor*, const char*, void(*f)(UniformPreprocessor*, UniformScanner*));
-  void (*process)(UniformPreprocessor*, const char*);
+  void (*register_macro)(UniformPreprocessor*, const char*, int(*f)(UniformPreprocessor*, UniformScanner*, UniformScanner*));
+  int (*process)(UniformPreprocessor*, const char*, UniformScanner*);
   void (*close)(UniformPreprocessor*);
 };
 
 struct UniformMacrosModuleStruct {
-  void (*import_macro)(UniformPreprocessor*, UniformScanner*);
+  int (*import_macro)(UniformPreprocessor*, UniformScanner*, UniformScanner*);
 };
 
 struct UniformTokenEmitterModuleStruct {

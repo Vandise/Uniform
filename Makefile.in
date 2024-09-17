@@ -32,10 +32,15 @@ endif
 
 -include modules/logger/Makefile.in
 -include modules/file/Makefile.in
+-include modules/error/Makefile.in
 -include modules/scanner/Makefile.in
 -include modules/preprocessor/Makefile.in
+
+all: logger fileutil errorutil scanner preprocessor
 
 clean:
 	rm -r modules/scanner/obj/*.o
 	rm -r modules/logger/obj/*.o
+	rm -r modules/file/obj/*.o
+	rm -r modules/error/obj/*.o
 	rm -r modules/preprocessor/obj/*.o

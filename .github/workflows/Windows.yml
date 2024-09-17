@@ -56,24 +56,9 @@ jobs:
         MINGW_INSTALLS: ${{ matrix.task.installs }}
         CI: true
 
-    - name: make utilities
+    - name: make all
       run: |
-        C:\tools\msys64\usr\bin\bash -lc "make logger"
-        C:\tools\msys64\usr\bin\bash -lc "make fileutil"
-      env:
-        HOME: ${{ runner.workspace }}/uniform
-        MINGW_INSTALLS: ${{ matrix.task.installs }}
-        CI: true
-
-    - name: make scanner
-      run: C:\tools\msys64\usr\bin\bash -lc "make scanner"
-      env:
-        HOME: ${{ runner.workspace }}/uniform
-        MINGW_INSTALLS: ${{ matrix.task.installs }}
-        CI: true
-
-    - name: make preprocessor
-      run: C:\tools\msys64\usr\bin\bash -lc "make preprocessor"
+        C:\tools\msys64\usr\bin\bash -lc "make all"
       env:
         HOME: ${{ runner.workspace }}/uniform
         MINGW_INSTALLS: ${{ matrix.task.installs }}
