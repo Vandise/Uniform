@@ -57,8 +57,12 @@ static UniformPreprocessor* init(const char *library, int emit) {
   preprocessor->emit_file = NULL;
   preprocessor->errored = 0;
   preprocessor->scanner_library_handle = handle;
+
   preprocessor->scanner_module = (struct UniformScannerModuleStruct*)dlsym(handle, "UniformScannerModule");
   preprocessor->scanner_module->set_log_level(UniformPreprocessorModule.log_level);
+  preprocessor->token_module = (struct UniformTokenModuleStruct*)dlsym(handle, "UniformTokenModule");
+
+  preprocessor->token_array = preprocessor->token_module->init(10);
 
   preprocessor->n_macro_size = 10;
   preprocessor->n_macro_used = 0;
@@ -114,11 +118,24 @@ static int process(UniformPreprocessor *preprocessor, const char *file_name, Uni
 
     do {
       preprocessor->scanner_module->get_token(scanner);
+
       if (scanner->current_token.code == T_MACRO) {
         preprocessor->errored = process_macro(preprocessor, scanner, initializer);
         if (preprocessor->errored) { break; }
       } else {
         // todo: execute macro if identifier and defined
+
+        //
+        // imports have an EOF signal, convert to newline for the parser
+        // attach a EOF token after the preprocessor completes
+        //
+        if (scanner->current_token.code == T_END_OF_FILE) {
+          UniformToken t = { .code = T_NEWLINE };
+          preprocessor->token_module->commit_token(preprocessor->token_array, t);
+        } else {
+          preprocessor->token_module->commit_token(preprocessor->token_array, scanner->current_token);
+        }
+
         if (preprocessor->emit) {
           UniformTokenEmitterModule.emit_token(preprocessor, scanner);
         }
@@ -168,9 +185,9 @@ static int process_macro(UniformPreprocessor *preprocessor, UniformScanner *scan
 static void uniform_close(UniformPreprocessor* preprocessor) {
   UniformLogger.log_info("Preprocessor::close");
 
-  void *handle = preprocessor->scanner_library_handle;
+  preprocessor->token_module->clear(preprocessor->token_array);
 
-  dlclose(handle);
+  dlclose((void*)preprocessor->scanner_library_handle);
 
   preprocessor->scanner_module = NULL;
   preprocessor->scanner_library_handle = NULL;

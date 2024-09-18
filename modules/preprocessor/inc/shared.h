@@ -29,6 +29,9 @@ typedef struct UniformPreprocessorStruct {
 
   void* scanner_library_handle;
   struct UniformScannerModuleStruct* scanner_module;
+  struct UniformTokenModuleStruct*   token_module;
+
+  UniformTokenArray* token_array;
 
   FILE *emit_file;
   char emit_file_name[FILE_PATH_MAX];

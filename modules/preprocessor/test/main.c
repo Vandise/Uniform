@@ -111,6 +111,9 @@ describe("Preprocessor Test Suite", preprocessor_test_suite)
 
       await_file(preprocessor->emit_file_name, 1);
 
+      UniformToken t = { .code = T_END_OF_FILE };
+      preprocessor->token_module->commit_token(preprocessor->token_array, t);
+
       UniformScanner *scanner = preprocessor->scanner_module->init(preprocessor->emit_file_name);
       init_chartable(scanner);
 
@@ -128,7 +131,8 @@ describe("Preprocessor Test Suite", preprocessor_test_suite)
 
       for (int i = 0; i < (sizeof(preprocessed_tokens) / sizeof(UNIFORM_TOKEN_CODE)); i++) {
         preprocessor->scanner_module->get_token(scanner);
-        expect(scanner->current_token.code) to equal(preprocessed_tokens[i]) 
+        expect(scanner->current_token.code) to equal(preprocessed_tokens[i])
+        expect(preprocessed_tokens[i]) to equal(preprocessor->token_array->tokens[i].code)
       }
 
       preprocessor->scanner_module->close(scanner);
@@ -167,7 +171,8 @@ describe("Preprocessor Test Suite", preprocessor_test_suite)
 end
 
 int main(void) {
-  UniformLogger.log_level = UniformPreprocessorModule.log_level;
+  UniformPreprocessorModule.log_level = UNIFORM_LOG_NONE;
+  UniformLogger.log_level = UNIFORM_LOG_NONE; //UniformPreprocessorModule.log_level;
 
   UniformLogger.log_info("Running testsuite for Preprocessor Module version %d", UNIFORM_PREPROCESSOR_VERSION);
 

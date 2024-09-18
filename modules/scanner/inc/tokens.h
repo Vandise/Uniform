@@ -69,7 +69,6 @@ struct UniformTokenModuleStruct {
 
   int (*string_is_reserved_word)(const char*);
   UNIFORM_TOKEN_CODE (*get_token_code)(const char*);
-
 };
 
 extern const struct UniformTokenModuleStruct UniformTokenModule;
