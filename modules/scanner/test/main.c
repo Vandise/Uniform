@@ -163,6 +163,33 @@ describe("Scanner Test Suite", scanner_test_suite)
 
 end
 
+describe("Scanner Tokens Test Suite", scanner_tokens_test_suite)
+  UniformTokenArray* arr = UniformTokenModule.init(1);
+  UniformToken t = {
+    .line_number = 255
+  };
+
+  context(".init")
+    it("sets the token array to the specified size")
+      expect(arr->size) to equal(1)
+      expect(arr->used) to equal(0)
+    end
+  end
+
+  context(".commit_token")
+    it("adds the token to the array")
+      UniformTokenModule.commit_token(arr, t);
+      expect(arr->used) to equal(1)
+      expect(arr->tokens[0].line_number) to equal(255)
+    end
+
+    it("resizes the array once full")
+      UniformTokenModule.commit_token(arr, t);
+      expect(arr->size) to equal(9)
+    end
+  end
+end
+
 int main(void) {
   UniformLogger.log_level = UNIFORM_LOG_INFO;
 

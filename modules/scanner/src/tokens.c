@@ -54,8 +54,36 @@ static UNIFORM_TOKEN_CODE get_token_code(const char* word_string) {
   return UNDEFINED_TOKEN;
 }
 
+static UniformTokenArray* init(int init_size) {
+  UniformTokenArray* arr = malloc(sizeof(UniformTokenArray));
+  arr->tokens = malloc(sizeof(UniformToken) * init_size);
+  arr->size = init_size;
+  arr->used = 0;
+
+  return arr;
+}
+
+static void commit_token(UniformTokenArray* arr, UniformToken token) {
+  if (arr->used == arr->size) {
+    arr->size = (arr->size * 3) / 2 + 8;
+    arr->tokens = (UniformToken*)(realloc(arr->tokens, arr->size * sizeof(UniformToken)));
+  }
+  arr->tokens[arr->used++] = token;
+}
+
+static void clear(UniformTokenArray* arr) {
+  free(arr->tokens);
+  free(arr);
+
+  arr = NULL;
+}
+
 const struct UniformTokenModuleStruct UniformTokenModule = {
   .version = UNIFORM_TOKEN_MODULE_VERSION,
+
+  .init = init,
+  .commit_token = commit_token,
+  .clear = clear,
 
   .string_is_reserved_word = string_is_reserved_word,
   .get_token_code = get_token_code

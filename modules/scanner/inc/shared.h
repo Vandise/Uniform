@@ -18,15 +18,6 @@
 #define UNIFORM_SCANNER_VERSION 100
 #define UNIFORM_SCANNER_MAX_SOURCE_LINE 1024
 
-#define I_32_LOWER -2147483648
-#define I_32_UPPER  2147483647
-#define I_64_LOWER -9223372036854775807
-#define I_64_UPPER  9223372036854775806
-
-typedef enum {
-  I_32LIT, I_64LIT, F_32LIT, F_64LIT, STRING_LIT,
-} UNIFORM_LITERAL;
-
 typedef enum {
   UNDEFINED_CHAR_CODE,
   LETTER_CHAR_CODE,
@@ -40,31 +31,6 @@ typedef enum {
   CARRIAGE_RETURN_CHAR_CODE,
   EOF_CHAR_CODE
 } UNIFORM_CHAR_CODE;
-
-typedef struct UniformScannerLiteralStruct {
-  UNIFORM_LITERAL type;
-  size_t size;
-  union {
-    int i32;
-    long int i64;
-    float f32;
-    double f64;
-    char  string[1024];
-  } value;
-} UniformScannerLiteral;
-
-typedef struct UniformScannerTokenStruct {
-  unsigned int line_number;
-  unsigned int level;
-
-  char *tokenp;
-  char source_name[FILE_PATH_MAX];
-  char word_string[1024];
-  char token_string[1024];
-
-  UNIFORM_TOKEN_CODE code;
-  UniformScannerLiteral literal;
-} UniformToken;
 
 typedef struct UniformScannerStruct {
   unsigned int line_number;

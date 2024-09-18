@@ -5,6 +5,15 @@
 #define UNIFORM_MIN_RESERVED_WORD_LENGTH 1
 #define UNIFORM_MAX_RESERVED_WORD_LENGTH 6
 
+#define I_32_LOWER -2147483648
+#define I_32_UPPER  2147483647
+#define I_64_LOWER -9223372036854775807
+#define I_64_UPPER  9223372036854775806
+
+typedef enum {
+  I_32LIT, I_64LIT, F_32LIT, F_64LIT, STRING_LIT,
+} UNIFORM_LITERAL;
+
 typedef enum {
   UNDEFINED_TOKEN, T_ERROR, T_NEWLINE, T_END_OF_FILE,
   T_MACRO, T_IDENTIFIER, T_STRING, T_CONSTANT, T_NUMERIC,
@@ -14,6 +23,38 @@ typedef enum {
   T_MODULE, T_END, T_STRUCT, T_FUNC, T_CASE, T_RETURN
 } UNIFORM_TOKEN_CODE;
 
+typedef struct UniformScannerLiteralStruct {
+  UNIFORM_LITERAL type;
+  size_t size;
+  union {
+    int i32;
+    long int i64;
+    float f32;
+    double f64;
+    char  string[1024];
+  } value;
+} UniformScannerLiteral;
+
+typedef struct UniformScannerTokenStruct {
+  unsigned int line_number;
+  unsigned int level;
+
+  char *tokenp;
+  char source_name[1024];
+  char word_string[1024];
+  char token_string[1024];
+
+  UNIFORM_TOKEN_CODE code;
+  UniformScannerLiteral literal;
+} UniformToken;
+
+typedef struct UniformTokenArrayStruct {
+  unsigned int size;
+  unsigned int used;
+
+  UniformToken* tokens;
+} UniformTokenArray;
+
 typedef struct UniformKeyWordStruct {
   char *string;
   UNIFORM_TOKEN_CODE token_code;
@@ -21,6 +62,10 @@ typedef struct UniformKeyWordStruct {
 
 struct UniformTokenModuleStruct {
   const signed int version;
+
+  UniformTokenArray* (*init)(int);
+  void (*commit_token)(UniformTokenArray*, UniformToken);
+  void (*clear)(UniformTokenArray*);
 
   int (*string_is_reserved_word)(const char*);
   UNIFORM_TOKEN_CODE (*get_token_code)(const char*);
