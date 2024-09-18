@@ -39,6 +39,7 @@ static char* get_file_path(const char* s) {
   // todo: expand ..'s
   //
   char *path_buffer = malloc(FILE_PATH_MAX);
+  memset(&path_buffer[0], 0, sizeof(path_buffer));
 
   // a full path was already provided
   if (s[0] != '/') {
