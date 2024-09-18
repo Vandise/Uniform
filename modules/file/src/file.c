@@ -7,6 +7,7 @@
 static char* get_file_path(const char* s);
 static char* uniform_strndup(const char *s, size_t n);
 static size_t uniform_strnlen(const char *src, size_t n);
+static char* uniform_basename(char *path);
 
 // ============================
 //        Implementation
@@ -26,6 +27,11 @@ static char* uniform_strndup(const char *s, size_t n) {
     p[len] = '\0';
   }
   return p;
+}
+
+static char* uniform_basename(char *path) {
+  char *base = strrchr(path, '/');
+  return base ? base+1 : path;
 }
 
 static char* get_file_path(const char* s) {
@@ -50,5 +56,6 @@ static char* get_file_path(const char* s) {
 }
 
 UniformFileUtilModule UniformFileUtil = {
-  .get_file_path = get_file_path
+  .get_file_path = get_file_path,
+  .basename = uniform_basename
 };

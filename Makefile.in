@@ -39,6 +39,7 @@ endif
 all: logger fileutil errorutil scanner preprocessor
 
 clean:
+	rm -r .tmp/*.u
 	rm -r modules/scanner/obj/*.o
 	rm -r modules/logger/obj/*.o
 	rm -r modules/file/obj/*.o

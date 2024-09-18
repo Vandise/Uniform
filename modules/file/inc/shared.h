@@ -11,6 +11,7 @@
 
 typedef struct UniformFileUtilModuleStruct {
   char* (*get_file_path)(const char*);
+  char* (*basename)(char* path);
 } UniformFileUtilModule;
 
 extern UniformFileUtilModule UniformFileUtil;

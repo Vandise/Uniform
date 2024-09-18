@@ -33,11 +33,13 @@ static int import_macro(UniformPreprocessor *preprocessor, UniformScanner *scann
 
   preprocessor->scanner_module->get_token(scanner); // T_CLOSE_PAREN
 
-  UniformPreprocessorModule.process(preprocessor, path_buffer, scanner);
-
-  preprocessor->scanner_module->get_token(scanner); // T_NEWLINE
+  int errored = UniformPreprocessorModule.process(preprocessor, path_buffer, scanner);
 
   free(buffer);
+
+  if (errored) { return 1; }
+
+  preprocessor->scanner_module->get_token(scanner); // T_NEWLINE
 
   return 0;
 }

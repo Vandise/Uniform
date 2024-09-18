@@ -28,16 +28,40 @@ static void init_chartable(UniformScanner* scanner) {
   scanner->char_table[EOF_CHAR] = EOF_CHAR_CODE;
 }
 
+static void ts_sleep(int s) {
+  int now = (int)time(NULL);
+  do {
+    int ls = (int)time(NULL);
+    if (ls - now >= s) {
+      break;
+    }
+  } while(1);
+}
+
+static int await_file(char* file_name, int timeout) {
+  int now = (int)time(NULL);
+  int failed = 0;
+
+  do {
+    int ls = (int)time(NULL);
+    if (ls - now > timeout) {
+      failed = 1;
+      break;
+    }
+  } while(access(file_name, F_OK) != 0);
+
+  return failed;
+}
+
 int emit = UNIFORM_PREPROCESSOR_EMIT;
 UniformPreprocessor* preprocessor = NULL;
 
 define_fixture(before, before_all) {
   preprocessor = UniformPreprocessorModule.init(SCANNER_LIB, emit);
-}
-
-define_fixture(before, before_register_macro) {
   UniformPreprocessorModule.register_macro(preprocessor, "import", UniformMacrosModule.import_macro);
 }
+
+define_fixture(before, before_register_macro) {}
 
 define_fixture(after, after_all) {
   UniformPreprocessorModule.close(preprocessor);
@@ -55,7 +79,6 @@ describe("Preprocessor Test Suite", preprocessor_test_suite)
 
   context(".register_macro")
     it("adds the macro to the macros list")
-      UniformPreprocessorModule.register_macro(preprocessor, "import", UniformMacrosModule.import_macro);
       expect(preprocessor->n_macro_size) to equal(10)
       expect(preprocessor->n_macro_used) to equal(1)
       expect(preprocessor->macros[0].name) to equal("import")
@@ -63,18 +86,31 @@ describe("Preprocessor Test Suite", preprocessor_test_suite)
   end
 
   context(".process")
-    before(before_register_macro)
-
     it("fails when a file is not found")
       UniformPreprocessorModule.process(preprocessor, "modules/preprocessor/test/files/dne.u", NULL);
+
+      expect(preprocessor->errored) to equal(1)
     end
 
-    it("emits a compiled set of tokens to the tmp directory")
+    it("emits the tokens to a file in the tmp directory")
       UniformPreprocessorModule.process(preprocessor, "modules/preprocessor/test/files/import.u", NULL);
-      // todo: ensure file exists
+      UniformPreprocessorModule.close_file_streams(preprocessor);
+
+      await_file(preprocessor->emit_file_name, 1);
+
+      FILE *file = fopen(preprocessor->emit_file_name, "r");
+  
+      expect((void*)file) to not be_null
+
+      fclose(file);
     end
 
     it("emits the expected tokens")
+      UniformPreprocessorModule.process(preprocessor, "modules/preprocessor/test/files/import.u", NULL);
+      UniformPreprocessorModule.close_file_streams(preprocessor);
+
+      await_file(preprocessor->emit_file_name, 1);
+
       UniformScanner *scanner = preprocessor->scanner_module->init(preprocessor->emit_file_name);
       init_chartable(scanner);
 
@@ -87,6 +123,36 @@ describe("Preprocessor Test Suite", preprocessor_test_suite)
         T_PIPE_OPERATOR, T_LAMBDA, T_NEWLINE,
         T_FUNC, T_STRUCT, T_CASE, T_RETURN, T_NEWLINE,
         T_END, T_NEWLINE,
+        T_END_OF_FILE
+      };
+
+      for (int i = 0; i < (sizeof(preprocessed_tokens) / sizeof(UNIFORM_TOKEN_CODE)); i++) {
+        preprocessor->scanner_module->get_token(scanner);
+        expect(scanner->current_token.code) to equal(preprocessed_tokens[i]) 
+      }
+
+      preprocessor->scanner_module->close(scanner);
+    end
+
+    it("terminates processing on error")
+      UniformPreprocessorModule.process(preprocessor, "modules/preprocessor/test/files/import_failure.u", NULL);
+      UniformPreprocessorModule.close_file_streams(preprocessor);
+
+      expect(preprocessor->errored) to equal(1)
+    end
+
+    it("terminates on the expected token")
+      UniformPreprocessorModule.process(preprocessor, "modules/preprocessor/test/files/import_failure.u", NULL);
+      UniformPreprocessorModule.close_file_streams(preprocessor);
+
+      await_file(preprocessor->emit_file_name, 1);
+
+      UniformScanner *scanner = preprocessor->scanner_module->init(preprocessor->emit_file_name);
+      init_chartable(scanner);
+
+      UNIFORM_TOKEN_CODE preprocessed_tokens[] = {
+        T_MODULE, T_CONSTANT, T_NEWLINE, T_STRING, T_NEWLINE, T_END, T_NEWLINE,
+        T_MODULE, T_CONSTANT, T_NEWLINE, T_END, T_NEWLINE,
         T_END_OF_FILE
       };
 

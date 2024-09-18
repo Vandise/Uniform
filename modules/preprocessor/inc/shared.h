@@ -25,6 +25,8 @@ typedef struct UniformMacroStruct {
 
 typedef struct UniformPreprocessorStruct {
   int emit;
+  int errored;
+
   void* scanner_library_handle;
   struct UniformScannerModuleStruct* scanner_module;
 
@@ -44,6 +46,7 @@ struct UniformPreprocessorModuleStruct {
   void (*register_macro)(UniformPreprocessor*, const char*, int(*f)(UniformPreprocessor*, UniformScanner*, UniformScanner*));
   int (*process)(UniformPreprocessor*, const char*, UniformScanner*);
   void (*close)(UniformPreprocessor*);
+  void (*close_file_streams)(UniformPreprocessor*);
 };
 
 struct UniformMacrosModuleStruct {

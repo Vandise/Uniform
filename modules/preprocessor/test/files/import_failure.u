@@ -1,0 +1,8 @@
+@import("imports/author")
+@import("imports/dne")
+module UniformTokens
+  42 0.42
+  . = { } [ ] + - * / ^ : ; , ? ! ( ) | < > ~ %
+  |> ->
+  func struct case return
+end
