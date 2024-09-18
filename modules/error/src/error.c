@@ -7,13 +7,15 @@
 static const char *error_codes[] = {
   "Unknown error.",
   "File not found.",
-  "Syntax error."
+  "Syntax error.",
+  "Macro Syntax Error"
 };
 
 static const char *error_message_fmt[] = {
   "An unknown error has occurred.",
   "File was not found: %s.",
-  "Expected token %s, got %s."
+  "Unexpected token %s, expected %s",
+  "Unexpected token %s, expected %s."
 };
 
 // ============================
@@ -25,7 +27,7 @@ static void trace_error(UNIFORM_ERROR_CODE, const char*, unsigned int, unsigned 
 
 // ============================
 //        Implementation
-// ===========================
+// ============================
 
 static void print_header(UNIFORM_ERROR_CODE code) {
   const char* err = error_codes[code];
@@ -96,7 +98,7 @@ static void trace_error(
 
 // ============================
 //        Module
-// ===========================
+// ============================
 
 UniformErrorUtilModule UniformErrorUtil = {
   .trace_error = trace_error

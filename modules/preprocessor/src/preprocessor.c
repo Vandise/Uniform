@@ -167,7 +167,16 @@ static int process_macro(UniformPreprocessor *preprocessor, UniformScanner *scan
 
   if (scanner->current_token.code != T_IDENTIFIER) {
     UniformLogger.log_fatal("Preprocessor::process_macro(error: invalid macro %s)", scanner->current_token.token_string);
-    // todo: error
+    UniformErrorUtil.trace_error(
+      UNIFORM_MACRO_SYNTAX_ERROR,
+      scanner->source_name,
+      scanner->line_number,
+      scanner->buffer_offset,
+      preprocessor->token_module->t_to_s(scanner->current_token.code),
+      preprocessor->token_module->t_to_s(T_IDENTIFIER),
+      scanner->current_token.token_string
+    );
+    return 1;
   }
 
   UniformMacro macro;

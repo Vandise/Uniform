@@ -1,5 +1,28 @@
 #include "uniform/scanner/shared.h"
 
+// ============================
+//          Locals
+// ============================
+
+static const char *token_strings[] = {
+  "????",
+  "Error",
+  "New Line",
+  "End of File",
+  "Macro",
+  "Identifier",
+  "String",
+  "Constant",
+  "Numeric",
+  ".",
+  "=",
+  "{","}",
+  "[","]",
+  "(",")",
+  "+","-","*","/","^",":",";",",","?","!","|",">","<","~","%",
+  "|>","->","module","end","struct","func","case","return"
+};
+
 UniformKeyWord kw1[] = {
   { NULL, 0 }
 };
@@ -25,6 +48,14 @@ UniformKeyWord kw6[] = {
 };
 
 UniformKeyWord *kw_table[] = { NULL, kw1, kw2, kw3, kw4, kw5, kw6 };
+
+// ============================
+//          Forwards
+// ============================
+
+// ============================
+//        Implementation
+// ============================
 
 static int string_is_reserved_word(const char* word_string) {
   int word_length = strlen(word_string);
@@ -78,12 +109,21 @@ static void clear(UniformTokenArray* arr) {
   arr = NULL;
 }
 
+static const char* token_to_string(UNIFORM_TOKEN_CODE code) {
+  return token_strings[code];
+}
+
+// ============================
+//        Module
+// ============================
+
 const struct UniformTokenModuleStruct UniformTokenModule = {
   .version = UNIFORM_TOKEN_MODULE_VERSION,
 
   .init = init,
   .commit_token = commit_token,
   .clear = clear,
+  .t_to_s = token_to_string,
 
   .string_is_reserved_word = string_is_reserved_word,
   .get_token_code = get_token_code

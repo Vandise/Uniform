@@ -7,7 +7,8 @@
 typedef enum {
   UNIFORM_UNDEFINED_ERROR,
   UNIFORM_FILE_NOT_FOUND,
-  UNIFORM_SYNTAX_ERROR
+  UNIFORM_SYNTAX_ERROR,
+  UNIFORM_MACRO_SYNTAX_ERROR
 } UNIFORM_ERROR_CODE;
 
 typedef struct UniformErrorUtilModuleStruct {
@@ -20,6 +21,7 @@ typedef struct UniformErrorUtilModuleStruct {
     unsigned int buffer_offset,
     ...
   );
+
 } UniformErrorUtilModule;
 
 extern UniformErrorUtilModule UniformErrorUtil;

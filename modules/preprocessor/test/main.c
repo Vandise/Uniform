@@ -168,6 +168,14 @@ describe("Preprocessor Test Suite", preprocessor_test_suite)
       preprocessor->scanner_module->close(scanner);
     end
   end
+
+  context("syntax errors")
+    it("fails when an invalid macro is defined")
+      UniformPreprocessorModule.process(preprocessor, "modules/preprocessor/test/files/syntax_errors/import.u", NULL);
+
+      expect(preprocessor->errored) to equal(1)
+    end
+  end
 end
 
 int main(void) {
