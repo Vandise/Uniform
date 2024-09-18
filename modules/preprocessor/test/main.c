@@ -114,9 +114,6 @@ describe("Preprocessor Test Suite", preprocessor_test_suite)
       UniformToken t = { .code = T_END_OF_FILE };
       preprocessor->token_module->commit_token(preprocessor->token_array, t);
 
-      //
-      // todo: fix windows newline write/check
-      //
       UniformScanner *scanner = preprocessor->scanner_module->init(preprocessor->emit_file_name);
       init_chartable(scanner);
 
@@ -154,9 +151,6 @@ describe("Preprocessor Test Suite", preprocessor_test_suite)
 
       await_file(preprocessor->emit_file_name, 1);
 
-      //
-      // todo: fix windows newline write/check
-      //
       UniformScanner *scanner = preprocessor->scanner_module->init(preprocessor->emit_file_name);
       init_chartable(scanner);
 

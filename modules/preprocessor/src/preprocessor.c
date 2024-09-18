@@ -8,6 +8,7 @@ static void init_uniform_chartable(UniformScanner* scanner);
 static unsigned long uniform_fhash(char *str);
 
 static UniformPreprocessor* init(const char *library, int emit);
+static int process_tokens(UniformPreprocessor *preprocessor, UniformScanner *scanner, UniformScanner *initializer);
 static int process(UniformPreprocessor *preprocessor, const char *file_name, UniformScanner *initializer);
 static int process_macro(UniformPreprocessor *preprocessor, UniformScanner *scanner, UniformScanner *initializer);
 static void register_macro(UniformPreprocessor* preprocessor, const char* macro, int(*action)(UniformPreprocessor*, UniformScanner*, UniformScanner*));
@@ -102,6 +103,35 @@ static void register_macro(UniformPreprocessor* preprocessor, const char* macro_
   preprocessor->macros[preprocessor->n_macro_used++] = macro;
 }
 
+static int process_tokens(UniformPreprocessor *preprocessor, UniformScanner *scanner, UniformScanner *initializer) {
+  preprocessor->scanner_module->get_token(scanner);
+  if (scanner->current_token.code == T_MACRO) {
+    preprocessor->errored = process_macro(preprocessor, scanner, initializer);
+    if (preprocessor->errored) {
+      return 1;
+    }
+  } else {
+    // todo: execute macro if identifier and defined
+  
+    //
+    // imports have an EOF signal, convert to newline for the parser
+    // attach a EOF token after the preprocessor completes
+    //
+    if (scanner->current_token.code == T_END_OF_FILE) {
+      UniformToken t = { .code = T_NEWLINE };
+      preprocessor->token_module->commit_token(preprocessor->token_array, t);
+    } else {
+      preprocessor->token_module->commit_token(preprocessor->token_array, scanner->current_token);
+    }
+  
+    if (preprocessor->emit) {
+      UniformTokenEmitterModule.emit_token(preprocessor, scanner);
+    }
+  }
+
+  return 0;
+}
+
 static int process(UniformPreprocessor *preprocessor, const char *file_name, UniformScanner *initializer) {
   UniformLogger.log_info(
     "Preprocessor::process(file: %s, emit file: %s / %s, initializer: %p)",
@@ -115,33 +145,10 @@ static int process(UniformPreprocessor *preprocessor, const char *file_name, Uni
 
   if (!scanner->errored) {
     init_uniform_chartable(scanner);
-
     do {
-      preprocessor->scanner_module->get_token(scanner);
-
-      if (scanner->current_token.code == T_MACRO) {
-        preprocessor->errored = process_macro(preprocessor, scanner, initializer);
-        if (preprocessor->errored) { break; }
-      } else {
-        // todo: execute macro if identifier and defined
-
-        //
-        // imports have an EOF signal, convert to newline for the parser
-        // attach a EOF token after the preprocessor completes
-        //
-        if (scanner->current_token.code == T_END_OF_FILE) {
-          UniformToken t = { .code = T_NEWLINE };
-          preprocessor->token_module->commit_token(preprocessor->token_array, t);
-        } else {
-          preprocessor->token_module->commit_token(preprocessor->token_array, scanner->current_token);
-        }
-
-        if (preprocessor->emit) {
-          UniformTokenEmitterModule.emit_token(preprocessor, scanner);
-        }
-      }
+      int errored = process_tokens(preprocessor, scanner, initializer);
+      if (errored) { break; }
     } while(scanner->current_token.code != T_END_OF_FILE && !preprocessor->errored);
-
   } else {
     UniformScanner *es = initializer == NULL ? scanner : initializer;
     UniformErrorUtil.trace_error(UNIFORM_FILE_NOT_FOUND, es->source_name, es->line_number, es->buffer_offset, file_name);
@@ -207,7 +214,6 @@ static void uniform_close_file_streams(UniformPreprocessor* preprocessor) {
   if(preprocessor->emit && preprocessor->emit_file != NULL) {
     fclose(preprocessor->emit_file);
     preprocessor->emit_file = NULL;
-    //rename(preprocessor->lock_file_name, preprocessor->emit_file_name);
   }
 }
 
