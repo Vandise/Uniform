@@ -12,8 +12,10 @@ SCANNER_OBJECTS      := $(patsubst $(SCANNER_DIR)/src/%.c, $(SCANNER_DIR)/obj/%.
 SCANNER_TEST_FILES   := $(wildcard $(SCANNER_DIR)/test/*.c)
 SCANNER_TEST_OBJECTS := $(patsubst $(SCANNER_DIR)/test/%.c, $(SCANNER_DIR)/obj/%.o, $(SCANNER_TEST_FILES))
 
+SCANNER_SHARED_FLAGS := $(SHAREDFLAG)
+
 ifeq ($(UNAME), Darwin)
-  SHAREDFLAG   := $(SHAREDFLAG) -install_name libuniformscanner.dylib -compatibility_version $(SCANNER_MAJOR_VERSION).$(SCANNER_MINOR_VERSION) -current_version $(SCANNER_MAJOR_VERSION).$(SCANNER_MINOR_VERSION).$(SCANNER_MAINT_VERSION)
+  SCANNER_SHARED_FLAGS   := $(SCANNER_SHARED_FLAGS) -install_name libuniformscanner.dylib -compatibility_version $(SCANNER_MAJOR_VERSION).$(SCANNER_MINOR_VERSION) -current_version $(SCANNER_MAJOR_VERSION).$(SCANNER_MINOR_VERSION).$(SCANNER_MAINT_VERSION)
   SCANNER_LIB_NAME := lib/libuniformscanner.$(LIBEXT).$(SCANNER_MAJOR_VERSION).$(SCANNER_MINOR_VERSION).$(SCANNER_MAINT_VERSION)
 endif
 
@@ -35,7 +37,7 @@ $(SCANNER_DIR)/obj/%.o: $(SCANNER_DIR)/src/%.c
 	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -c $< -o $@
 
 scanner_library:
-	$(CC) $(SHAREDFLAG) $(SCANNER_OBJECTS) $(LOGGER_LIB_NAME) -lm -o $(SCANNER_LIB_NAME)
+	$(CC) $(SCANNER_SHARED_FLAGS) $(SCANNER_OBJECTS) $(LOGGER_LIB_NAME) -lm -o $(SCANNER_LIB_NAME)
 
 scanner_tests: $(SCANNER_TEST_OBJECTS)
 	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -o bin/scanner_tests $(SCANNER_OBJECTS) $(SCANNER_TEST_OBJECTS) $(LOGGER_LIB_NAME) -lawry -lm
