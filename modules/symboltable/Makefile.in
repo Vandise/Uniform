@@ -1,0 +1,31 @@
+SYMBOLTABLE_DIR := modules/symboltable
+SYMBOLTABLE_LIB_NAME := lib/libuniformsymboltable.$(ARCHIVE_EXT)
+
+SYMBOLTABLE_FILES        := $(wildcard $(SYMBOLTABLE_DIR)/src/*.c)
+SYMBOLTABLE_HEADERS      := $(wildcard $(SYMBOLTABLE_DIR)/inc/*.h)
+
+SYMBOLTABLE_OBJECTS      := $(patsubst $(SYMBOLTABLE_DIR)/src/%.c, $(SYMBOLTABLE_DIR)/obj/%.o, $(SYMBOLTABLE_FILES))
+SYMBOLTABLE_TEST_FILES   := $(wildcard $(SYMBOLTABLE_DIR)/test/*.c)
+SYMBOLTABLE_TEST_OBJECTS := $(patsubst $(SYMBOLTABLE_DIR)/test/%.c, $(SYMBOLTABLE_DIR)/obj/%.o, $(SYMBOLTABLE_TEST_FILES))
+
+symboltable: symboltable_mkdir symboltable_add_headers symboltable_module symboltable_library symboltable_tests
+
+symboltable_mkdir:
+	mkdir -p $(SYSINCDIR)/uniform/symboltable
+
+symboltable_add_headers:
+	cp $(SYMBOLTABLE_HEADERS) $(SYSINCDIR)/uniform/symboltable
+
+symboltable_module: $(SYMBOLTABLE_OBJECTS)
+
+$(SYMBOLTABLE_DIR)/obj/%.o: $(SYMBOLTABLE_DIR)/src/%.c
+	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -c $< -o $@
+
+symboltable_library:
+	$(ARCHIVER) rcs $(LOGGER_LIB_NAME) $(LOGGER_OBJECTS)
+
+symboltable_tests: $(SYMBOLTABLE_TEST_OBJECTS)
+	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -o bin/symboltable_tests $(SYMBOLTABLE_OBJECTS) $(SYMBOLTABLE_TEST_OBJECTS) -lawry -lm
+
+$(SYMBOLTABLE_TEST_OBJECTS): $(SYMBOLTABLE_TEST_FILES)
+	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -c $< -o $@
