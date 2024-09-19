@@ -1,31 +1,7 @@
-#ifndef __UNIFORM_PARSERH
-#define __UNIFORM_PARSERH 1
+#ifndef __UNIFORM_PARSERSHAREDH
+#define __UNIFORM_PARSERSHAREDH 1
 
-#include "uniform/error/shared.h"
-#include "uniform/scanner/tokens.h"
-#include "uniform/symboltable/shared.h"
-
-typedef struct UniformParserStruct {
-  unsigned int token_index;
-
-  UniformTokenArray* token_arr;
-} UniformParser;
-
-struct UniformParserExpressionStruct {
-  void (*process)(UniformParser*);
-};
-
-struct UniformParserModuleStruct {
-  UniformParser* (*init)(UniformTokenArray*);
-
-  UniformToken* (*get_token)(UniformParser*);
-  UniformToken* (*peek)(UniformParser*, int);
-  void (*next)(UniformParser*);
-
-  void (*close)(UniformParser*);
-} UniformParserModule;
-
-extern struct UniformParserModuleStruct UniformParserModule;
-extern struct UniformParserExpressionStruct UniformParserExpression;
+#include "uniform/parser/parser.h"
+#include "uniform/parser/expressions.h"
 
 #endif
