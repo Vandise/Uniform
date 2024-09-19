@@ -9,6 +9,7 @@ FILE_UTIL_OBJECTS      := $(patsubst $(FILE_UTIL_DIR)/src/%.c, $(FILE_UTIL_DIR)/
 fileutil: file_util_mkdir file_util_add_headers file_util_module file_util_library
 
 file_util_mkdir:
+	@echo "\nFile Module\n"
 	mkdir -p $(SYSINCDIR)/uniform/file
 
 file_util_add_headers:

@@ -11,6 +11,7 @@ SYMBOLTABLE_TEST_OBJECTS := $(patsubst $(SYMBOLTABLE_DIR)/test/%.c, $(SYMBOLTABL
 symboltable: symboltable_mkdir symboltable_add_headers symboltable_module symboltable_library symboltable_tests
 
 symboltable_mkdir:
+	@echo "\nSymbolTable Module\n"
 	mkdir -p $(SYSINCDIR)/uniform/symboltable
 
 symboltable_add_headers:

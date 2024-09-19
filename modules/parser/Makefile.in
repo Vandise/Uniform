@@ -20,6 +20,7 @@ endif
 parser: parser_mkdir parser_add_headers parser_module parser_library parser_tests parser_install
 
 parser_mkdir:
+	@echo "\nParser Module\n"
 	mkdir -p $(SYSINCDIR)/uniform/parser
 
 parser_add_headers:

@@ -20,6 +20,7 @@ endif
 scanner: scanner_mkdir scanner_add_headers scanner_module scanner_library scanner_tests scanner_install
 
 scanner_mkdir:
+	@echo "\nScanner Module\n"
 	mkdir -p $(SYSINCDIR)/uniform/scanner
 
 scanner_add_headers:

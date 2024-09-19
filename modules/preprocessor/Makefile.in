@@ -11,6 +11,7 @@ PREPROCESSOR_TEST_OBJECTS := $(patsubst $(PREPROCESSOR_DIR)/test/%.c, $(PREPROCE
 preprocessor: preprocessor_mkdir preprocessor_add_headers preprocessor_module preprocessor_library preprocessor_tests
 
 preprocessor_mkdir:
+	@echo "\nPreprocessor Module\n"
 	mkdir -p $(SYSINCDIR)/uniform/preprocessor
 
 preprocessor_add_headers:

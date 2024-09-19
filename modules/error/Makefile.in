@@ -9,6 +9,7 @@ ERROR_UTIL_OBJECTS      := $(patsubst $(ERROR_UTIL_DIR)/src/%.c, $(ERROR_UTIL_DI
 errorutil: error_util_mkdir error_util_add_headers error_util_module error_util_library
 
 error_util_mkdir:
+	@echo "\nError Module\n"
 	mkdir -p $(SYSINCDIR)/uniform/error
 
 error_util_add_headers:

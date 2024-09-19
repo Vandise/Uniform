@@ -9,6 +9,7 @@ LOGGER_OBJECTS      := $(patsubst $(LOGGER_DIR)/src/%.c, $(LOGGER_DIR)/obj/%.o, 
 logger: logger_mkdir logger_add_headers logger_module logger_library
 
 logger_mkdir:
+	@echo "\nLogger Module\n"
 	mkdir -p $(SYSINCDIR)/uniform/logger
 
 logger_add_headers:
