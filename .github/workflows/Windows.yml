@@ -69,6 +69,7 @@ jobs:
         C:\tools\msys64\usr\bin\bash -lc "ldd ./bin/scanner_tests.exe"
         C:\tools\msys64\usr\bin\bash -lc "ldd ./bin/preprocessor_tests.exe"
         C:\tools\msys64\usr\bin\bash -lc "ldd ./bin/symboltable_tests.exe"
+        C:\tools\msys64\usr\bin\bash -lc "ldd ./bin/parser_tests.exe"
       env:
         HOME: ${{ runner.workspace }}/uniform
         MINGW_INSTALLS: ${{ matrix.task.installs }}

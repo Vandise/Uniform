@@ -28,3 +28,4 @@ jobs:
         ./bin/scanner_tests
         ./bin/preprocessor_tests
         ./bin/symboltable_tests
+        ./bin/parser_tests

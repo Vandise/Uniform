@@ -22,7 +22,7 @@ $(SYMBOLTABLE_DIR)/obj/%.o: $(SYMBOLTABLE_DIR)/src/%.c
 	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -c $< -o $@
 
 symboltable_library:
-	$(ARCHIVER) rcs $(LOGGER_LIB_NAME) $(LOGGER_OBJECTS)
+	$(ARCHIVER) rcs $(SYMBOLTABLE_LIB_NAME) $(LOGGER_OBJECTS)
 
 symboltable_tests: $(SYMBOLTABLE_TEST_OBJECTS)
 	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -o bin/symboltable_tests $(SYMBOLTABLE_OBJECTS) $(SYMBOLTABLE_TEST_OBJECTS) -lawry -lm
