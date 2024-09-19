@@ -79,6 +79,8 @@ jobs:
       run: |
         ./bin/scanner_tests.exe
         ./bin/preprocessor_tests.exe
+        ./bin/symboltable_tests.exe
+        ./bin/parser_tests.exe
       continue-on-error: true
       env:
         HOME: ${{ runner.workspace }}/uniform
