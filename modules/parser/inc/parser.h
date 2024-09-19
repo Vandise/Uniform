@@ -19,7 +19,7 @@ struct UniformParserModuleStruct {
   void (*next)(UniformParser*);
 
   void (*close)(UniformParser*);
-} UniformParserModule;
+};
 
 extern struct UniformParserModuleStruct UniformParserModule;
 
