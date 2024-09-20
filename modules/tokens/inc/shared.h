@@ -1,7 +1,8 @@
-#ifndef __UNIFORM_SCANNER_TOKENSH
-#define __UNIFORM_SCANNER_TOKENSH 1
+#ifndef __UNIFORM_TOKENSH
+#define __UNIFORM_TOKENSH 1
 
 #include <stdlib.h>
+#include <string.h>
 
 #define UNIFORM_TOKEN_MODULE_VERSION 100
 #define UNIFORM_MIN_RESERVED_WORD_LENGTH 1

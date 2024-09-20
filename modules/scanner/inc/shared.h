@@ -8,7 +8,7 @@
 #include <float.h>
 #include <errno.h>
 #include "uniform/logger/shared.h"
-#include "uniform/scanner/tokens.h"
+#include "uniform/tokens/shared.h"
 
 #define FILE_PATH_MAX 1024
 #define EOF_CHAR     '\x7f'

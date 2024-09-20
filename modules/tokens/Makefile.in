@@ -1,0 +1,27 @@
+TOKEN_DIR := modules/tokens
+TOKEN_LIB_NAME := lib/libuniformtokens.$(ARCHIVE_EXT)
+
+TOKEN_FILES        := $(wildcard $(TOKEN_DIR)/src/*.c)
+TOKEN_HEADERS      := $(wildcard $(TOKEN_DIR)/inc/*.h)
+
+TOKEN_OBJECTS      := $(patsubst $(TOKEN_DIR)/src/%.c, $(TOKEN_DIR)/obj/%.o, $(TOKEN_FILES))
+
+tokens: token_mkdir token_add_headers token_module token_library
+
+token_mkdir:
+	@echo "\Token Module\n"
+	mkdir -p $(SYSINCDIR)/uniform/tokens
+
+token_add_headers:
+	cp $(TOKEN_HEADERS) $(SYSINCDIR)/uniform/tokens
+
+token_install:
+	cp $(TOKEN_LIB_NAME) $(SYSLIBDIR)
+
+token_module: $(TOKEN_OBJECTS)
+
+$(TOKEN_DIR)/obj/%.o: $(TOKEN_DIR)/src/%.c
+	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -c $< -o $@
+
+token_library:
+	$(ARCHIVER) rcs $(TOKEN_LIB_NAME) $(TOKEN_OBJECTS)

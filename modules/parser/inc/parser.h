@@ -3,7 +3,7 @@
 
 #include "uniform/logger/shared.h"
 #include "uniform/error/shared.h"
-#include "uniform/scanner/tokens.h"
+#include "uniform/tokens/shared.h"
 #include "uniform/symboltable/shared.h"
 
 typedef struct UniformParserStruct {

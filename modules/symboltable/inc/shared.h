@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "uniform/tokens/shared.h"
+
 struct UniformSymbolTableNodeStruct;
 struct UniformSymbolTableStruct;
 

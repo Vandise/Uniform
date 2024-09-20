@@ -32,13 +32,14 @@ endif
 
 -include modules/logger/Makefile.in
 -include modules/file/Makefile.in
+-include modules/tokens/Makefile.in
 -include modules/error/Makefile.in
 -include modules/symboltable/Makefile.in
 -include modules/scanner/Makefile.in
 -include modules/preprocessor/Makefile.in
 -include modules/parser/Makefile.in
 
-all: logger fileutil errorutil symboltable scanner preprocessor parser
+all: logger fileutil errorutil tokens symboltable scanner preprocessor parser
 
 clean:
 	rm -rf .tmp/*.u
@@ -49,3 +50,4 @@ clean:
 	rm -rf modules/error/obj/*.o
 	rm -rf modules/preprocessor/obj/*.o
 	rm -rf modules/parser/obj/*.o
+	rm -rf modules/tokens/obj/*.o
