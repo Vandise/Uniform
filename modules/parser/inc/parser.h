@@ -1,6 +1,7 @@
 #ifndef __UNIFORM_PARSERH
 #define __UNIFORM_PARSERH 1
 
+#include "uniform/logger/shared.h"
 #include "uniform/error/shared.h"
 #include "uniform/scanner/tokens.h"
 #include "uniform/symboltable/shared.h"
@@ -17,6 +18,7 @@ struct UniformParserModuleStruct {
   UniformToken* (*get_token)(UniformParser*);
   UniformToken* (*peek)(UniformParser*, int);
   void (*next)(UniformParser*);
+  int (*token_in_list)(UNIFORM_TOKEN_CODE, UNIFORM_TOKEN_CODE[]);
 
   void (*close)(UniformParser*);
 };

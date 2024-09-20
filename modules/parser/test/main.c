@@ -16,18 +16,22 @@
   #define SCANNER_LIB "lib/libuniformscanner.dylib.1.0.0"
 #endif
 
-define_fixture(before, before_all) {
+UniformPreprocessor* expressions_preprocessor = NULL;
+UniformParser* expressions_parser = NULL;
 
+define_fixture(before, before_expressions) {
+  expressions_preprocessor = UniformPreprocessorModule.init(SCANNER_LIB, 0);
+  UniformPreprocessorModule.process(expressions_preprocessor, "modules/parser/test/files/expressions.u", NULL);
+  
+  expressions_parser = UniformParserModule.init(expressions_preprocessor->token_array);
 }
 
-define_fixture(after, after_all) {
-
+define_fixture(after, after_expressions) {
+  UniformParserModule.close(expressions_parser);
+  UniformPreprocessorModule.close(expressions_preprocessor);
 }
 
 describe("Parser Test Suite", parser_test_suite)
-  before(before_all)
-  after(after_all)
-
   context(".init")
     it("sets the token array")
       UniformParser* parser_ini = UniformParserModule.init(NULL);
@@ -106,11 +110,20 @@ describe("Parser Test Suite", parser_test_suite)
       UniformPreprocessorModule.close(preprocessor);
     end
   end
+
+  context(".expressions")
+    before(before_expressions)
+    after(after_expressions)
+
+    it("parses addition expressions")
+      UniformParserExpression.process(expressions_parser);
+    end
+  end
 end
 
 int main(void) {
-  UniformPreprocessorModule.log_level = UNIFORM_LOG_NONE;
-  UniformLogger.log_level = UNIFORM_LOG_NONE;
+  //UniformPreprocessorModule.log_level = UNIFORM_LOG_NONE;
+  //UniformLogger.log_level = UNIFORM_LOG_NONE;
 
   Awry.run();
   Awry.clear(&Awry);
