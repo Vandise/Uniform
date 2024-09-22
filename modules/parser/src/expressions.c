@@ -30,10 +30,17 @@ static void process(UniformParser* parser) {
 
   UniformToken* t = UniformParserModule.get_token(parser);
 
-  if(UniformParserModule.token_in_list(t->code, rel_op_list)) {
+  // postfix: printf("%s ", t->token_string);
+
+  if(
+    UniformParserModule.token_in_list(t->code, rel_op_list) ||
+    UniformParserModule.token_in_list(t->code, add_op_list) ||
+    UniformParserModule.token_in_list(t->code, mult_op_list)
+  ) {
     operator = t->code;
     UniformParserModule.next(parser);
     expression(parser);
+    // postfix: printf("%s ", UniformTokenModule.t_to_s(operator));
   }
 }
 
@@ -52,6 +59,8 @@ static void expression(UniformParser* parser) {
 
   term(parser);
 
+  // postfix: printf("%s ", unary_op == T_PLUS ? "" : "neg");
+
   t = UniformParserModule.get_token(parser);
 
   while(UniformParserModule.token_in_list(t->code, add_op_list)) {
@@ -59,6 +68,7 @@ static void expression(UniformParser* parser) {
     UniformParserModule.next(parser);
     t = UniformParserModule.get_token(parser);
     term(parser);
+    // postfix: printf("%s ", UniformTokenModule.t_to_s(operator));
   }
 }
 
@@ -76,6 +86,7 @@ static void term(UniformParser* parser) {
     UniformParserModule.next(parser);
     t = UniformParserModule.get_token(parser);
     factor(parser);
+    // postfix: printf("%s ", UniformTokenModule.t_to_s(operator));
   }
 }
 
@@ -90,6 +101,7 @@ static void factor(UniformParser* parser) {
       break;
     case T_NUMERIC:
       UniformParserModule.next(parser);
+      // postfix: printf("%s ", t->token_string);
       break;
     case T_STRING:
       UniformParserModule.next(parser);
@@ -101,7 +113,8 @@ static void factor(UniformParser* parser) {
       UniformParserModule.next(parser);
       break;
     default:
-      printf("\n todo: error \n");
+      // postfix: printf("\n todo: error \n");
+      t->code = T_ERROR;
       break;
   }
 }

@@ -22,14 +22,15 @@ static UniformParser* init(UniformTokenArray* tokens) {
 }
 
 static UniformToken* get_token(UniformParser* parser) {
-  if (parser->token_index >= parser->token_arr->used) {
+  if (parser->token_index >= parser->token_arr->used ) {
     return NULL;
   }
+
   return &(parser->token_arr->tokens[parser->token_index]);
 }
 
 static UniformToken* peek(UniformParser* parser, int n) {
-  if (parser->token_index + n >= parser->token_arr->used) {
+  if (parser->token_index + n >= parser->token_arr->used ) {
     return NULL;
   }
   return &(parser->token_arr->tokens[parser->token_index + n]);
