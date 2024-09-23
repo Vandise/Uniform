@@ -6,7 +6,7 @@
 typedef struct UniformParserStruct UniformParser;
 
 struct UniformParserExpressionStruct {
-  void (*process)(UniformParser*);
+  UniformASTExpressionNode* (*process)(UniformParser*, UniformASTExpressionNode*);
 };
 
 extern struct UniformParserExpressionStruct UniformParserExpression;

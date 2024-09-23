@@ -116,7 +116,7 @@ describe("Parser Test Suite", parser_test_suite)
     after(after_expressions)
 
     it("parses addition expressions")
-      UniformParserExpression.process(expressions_parser);
+      UniformParserExpression.process(expressions_parser, NULL);
     end
   end
 end

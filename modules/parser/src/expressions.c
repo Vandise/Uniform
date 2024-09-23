@@ -13,24 +13,30 @@ static UNIFORM_TOKEN_CODE mult_op_list[] = { T_STAR, T_SLASH, 0 };
 //          Forwards
 // ============================
 
-static void process(UniformParser* parser);
-static void expression(UniformParser* parser);
-static void term(UniformParser* parser);
-static void factor(UniformParser* parser);
+static UniformASTExpressionNode* process(UniformParser* parser, UniformASTExpressionNode* tree);
+static void expression(UniformParser* parser, UniformASTExpressionNode* tree);
+static void term(UniformParser* parser, UniformASTExpressionNode* tree);
+static void factor(UniformParser* parser, UniformASTExpressionNode* tree);
 
 // ============================
 //        Implementation
 // ============================
 
-static void process(UniformParser* parser) {
+// returns a tree in post-fix notation
+static UniformASTExpressionNode* process(UniformParser* parser, UniformASTExpressionNode* tree) {
   UniformLogger.log_info("UniformParser::Expressions::process");
 
+  if (tree == NULL) {
+    //tree = UniformASTModule.init_tree(10);
+  }
+
   UNIFORM_TOKEN_CODE operator;
-  expression(parser);
+  expression(parser, tree);
 
   UniformToken* t = UniformParserModule.get_token(parser);
 
   // postfix: printf("%s ", t->token_string);
+  //UniformASTNodeModule.token_to_node(t);
 
   if(
     UniformParserModule.token_in_list(t->code, rel_op_list) ||
@@ -39,12 +45,14 @@ static void process(UniformParser* parser) {
   ) {
     operator = t->code;
     UniformParserModule.next(parser);
-    expression(parser);
+    expression(parser, tree);
     // postfix: printf("%s ", UniformTokenModule.t_to_s(operator));
   }
+
+  return tree;
 }
 
-static void expression(UniformParser* parser) {
+static void expression(UniformParser* parser, UniformASTExpressionNode* tree) {
   UniformLogger.log_info("UniformParser::Expressions::expression");
 
   UNIFORM_TOKEN_CODE operator;
@@ -57,7 +65,7 @@ static void expression(UniformParser* parser) {
     UniformParserModule.next(parser);
   }
 
-  term(parser);
+  term(parser, tree);
 
   // postfix: printf("%s ", unary_op == T_PLUS ? "" : "neg");
 
@@ -67,17 +75,17 @@ static void expression(UniformParser* parser) {
     operator = t->code;
     UniformParserModule.next(parser);
     t = UniformParserModule.get_token(parser);
-    term(parser);
+    term(parser, tree);
     // postfix: printf("%s ", UniformTokenModule.t_to_s(operator));
   }
 }
 
-static void term(UniformParser* parser) {
+static void term(UniformParser* parser, UniformASTExpressionNode* tree) {
   UniformLogger.log_info("UniformParser::Expressions::term");
 
   UNIFORM_TOKEN_CODE operator;
 
-  factor(parser);
+  factor(parser, tree);
 
   UniformToken* t = UniformParserModule.get_token(parser);
 
@@ -85,12 +93,12 @@ static void term(UniformParser* parser) {
     operator = t->code;
     UniformParserModule.next(parser);
     t = UniformParserModule.get_token(parser);
-    factor(parser);
+    factor(parser, tree);
     // postfix: printf("%s ", UniformTokenModule.t_to_s(operator));
   }
 }
 
-static void factor(UniformParser* parser) {
+static void factor(UniformParser* parser, UniformASTExpressionNode* tree) {
   UniformLogger.log_info("UniformParser::Expressions::factor");
 
   UniformToken* t = UniformParserModule.get_token(parser);
@@ -108,7 +116,7 @@ static void factor(UniformParser* parser) {
       break;
     case T_OPEN_PAREN:
       UniformParserModule.next(parser);
-      process(parser);
+      process(parser, tree);
       // todo: assert is T_CLOSE_PAREN
       UniformParserModule.next(parser);
       break;

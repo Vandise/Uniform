@@ -1,0 +1,27 @@
+AST_DIR := modules/ast
+AST_LIB_NAME := lib/libuniformast.$(ARCHIVE_EXT)
+
+AST_FILES        := $(wildcard $(AST_DIR)/src/*.c)
+AST_HEADERS      := $(wildcard $(AST_DIR)/inc/*.h)
+
+AST_OBJECTS      := $(patsubst $(AST_DIR)/src/%.c, $(AST_DIR)/obj/%.o, $(AST_FILES))
+
+ast: ast_mkdir ast_add_headers ast_module ast_library
+
+ast_mkdir:
+	@echo "\AST Module\n"
+	mkdir -p $(SYSINCDIR)/uniform/ast
+
+ast_add_headers:
+	cp $(AST_HEADERS) $(SYSINCDIR)/uniform/ast
+
+ast_install:
+	cp $(AST_LIB_NAME) $(SYSLIBDIR)
+
+ast_module: $(AST_OBJECTS)
+
+$(AST_DIR)/obj/%.o: $(AST_DIR)/src/%.c
+	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -c $< -o $@
+
+ast_library:
+	$(ARCHIVER) rcs $(AST_LIB_NAME) $(AST_OBJECTS)
