@@ -112,6 +112,9 @@ static void get_token(UniformScanner* scanner) {
   skip_blanks(scanner);
 
   scanner->current_token.tokenp = scanner->current_token.token_string;
+  scanner->current_token.line_number = scanner->line_number;
+  scanner->current_token.buffer_offset = scanner->buffer_offset;
+  strcpy(scanner->current_token.source_name, scanner->source_name);
 
   switch(scanner->char_table[scanner->current_char]) {
     case LETTER_CHAR_CODE:

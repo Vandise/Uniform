@@ -41,6 +41,7 @@ typedef struct UniformScannerLiteralStruct {
 
 typedef struct UniformScannerTokenStruct {
   unsigned int line_number;
+  unsigned int buffer_offset;
   unsigned int level;
 
   char *tokenp;
