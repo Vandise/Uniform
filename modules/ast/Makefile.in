@@ -3,10 +3,12 @@ AST_LIB_NAME := lib/libuniformast.$(ARCHIVE_EXT)
 
 AST_FILES        := $(wildcard $(AST_DIR)/src/*.c)
 AST_HEADERS      := $(wildcard $(AST_DIR)/inc/*.h)
-
 AST_OBJECTS      := $(patsubst $(AST_DIR)/src/%.c, $(AST_DIR)/obj/%.o, $(AST_FILES))
 
-ast: ast_mkdir ast_add_headers ast_module ast_library
+AST_TEST_FILES   := $(wildcard $(AST_DIR)/test/*.c)
+AST_TEST_OBJECTS := $(patsubst $(AST_DIR)/test/%.c, $(AST_DIR)/obj/%.o, $(AST_TEST_FILES))
+
+ast: ast_mkdir ast_add_headers ast_module ast_library ast_tests
 
 ast_mkdir:
 	@echo "\AST Module\n"
@@ -25,3 +27,9 @@ $(AST_DIR)/obj/%.o: $(AST_DIR)/src/%.c
 
 ast_library:
 	$(ARCHIVER) rcs $(AST_LIB_NAME) $(AST_OBJECTS)
+
+ast_tests: $(AST_TEST_OBJECTS)
+	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -o bin/ast_tests $(AST_TEST_OBJECTS) $(AST_OBJECTS) -lawry -lm
+
+$(AST_TEST_OBJECTS): $(AST_TEST_FILES)
+	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -c $< -o $@

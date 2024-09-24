@@ -34,8 +34,7 @@ static void insert_node(struct UniformASTStruct *tree, UniformASTNode *node) {
 
 static void free_tree(struct UniformASTStruct *tree) {
   for (int i = 0; i < tree->used; i++) {
-    // todo: cast to type based on node
-    // free(tree->nodes[i]->data);
+    free(tree->nodes[i]->data);
     free(tree->nodes[i]);
   }
   free(tree);

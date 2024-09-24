@@ -115,7 +115,7 @@ describe("Parser Test Suite", parser_test_suite)
     before(before_expressions)
     after(after_expressions)
 
-    it("parses addition expressions")
+    it("parses complex expressions")
       // 17 neg 42 + 4 / 2 3 * - 9 3 - 21 + *
       UNIFORM_NODE_TYPE node_types[] = {
         UNIFORM_LITERAL_NODE,UNIFORM_OPERATOR_NODE,UNIFORM_LITERAL_NODE,
