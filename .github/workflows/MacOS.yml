@@ -32,3 +32,4 @@ jobs:
         ./bin/preprocessor_tests
         ./bin/symboltable_tests
         ./bin/parser_tests
+        ./bin/ast_tests
