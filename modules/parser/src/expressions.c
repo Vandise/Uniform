@@ -27,26 +27,27 @@ static UniformASTExpressionNode* process(UniformParser* parser, UniformASTExpres
   UniformLogger.log_info("UniformParser::Expressions::process");
 
   if (tree == NULL) {
-    //tree = UniformASTModule.init_tree(10);
+    tree = UniformASTModule.init_tree(10);
   }
 
-  UNIFORM_TOKEN_CODE operator;
+  UniformToken* operator;
   expression(parser, tree);
 
   UniformToken* t = UniformParserModule.get_token(parser);
-
-  // postfix: printf("%s ", t->token_string);
-  //UniformASTNodeModule.token_to_node(t);
 
   if(
     UniformParserModule.token_in_list(t->code, rel_op_list) ||
     UniformParserModule.token_in_list(t->code, add_op_list) ||
     UniformParserModule.token_in_list(t->code, mult_op_list)
   ) {
-    operator = t->code;
+    operator = UniformParserModule.get_token(parser);
     UniformParserModule.next(parser);
     expression(parser, tree);
-    // postfix: printf("%s ", UniformTokenModule.t_to_s(operator));
+
+    UniformASTModule.insert_node(
+      tree,
+      UniformASTNodeModule.token_to_node(operator)
+    );
   }
 
   return tree;
@@ -55,46 +56,62 @@ static UniformASTExpressionNode* process(UniformParser* parser, UniformASTExpres
 static void expression(UniformParser* parser, UniformASTExpressionNode* tree) {
   UniformLogger.log_info("UniformParser::Expressions::expression");
 
-  UNIFORM_TOKEN_CODE operator;
+  UniformToken* operator = NULL;
   UNIFORM_TOKEN_CODE unary_op = T_PLUS;
 
   UniformToken* t = UniformParserModule.get_token(parser);
 
   if (t->code == T_PLUS || t->code == T_MINUS) {
-    unary_op = t->code;
+    operator = UniformParserModule.get_token(parser);
     UniformParserModule.next(parser);
   }
 
   term(parser, tree);
 
-  // postfix: printf("%s ", unary_op == T_PLUS ? "" : "neg");
+  if (operator != NULL && operator->code == T_MINUS) {
+    t->code = T_NEGATE;
+    UniformASTModule.insert_node(
+      tree,
+      UniformASTNodeModule.token_to_node(t)
+    );
+  }
 
   t = UniformParserModule.get_token(parser);
 
   while(UniformParserModule.token_in_list(t->code, add_op_list)) {
-    operator = t->code;
+    operator = UniformParserModule.get_token(parser);
+
     UniformParserModule.next(parser);
     t = UniformParserModule.get_token(parser);
     term(parser, tree);
-    // postfix: printf("%s ", UniformTokenModule.t_to_s(operator));
+
+    UniformASTModule.insert_node(
+      tree,
+      UniformASTNodeModule.token_to_node(operator)
+    );
   }
 }
 
 static void term(UniformParser* parser, UniformASTExpressionNode* tree) {
   UniformLogger.log_info("UniformParser::Expressions::term");
 
-  UNIFORM_TOKEN_CODE operator;
+  UniformToken* operator;
 
   factor(parser, tree);
 
   UniformToken* t = UniformParserModule.get_token(parser);
 
   while(UniformParserModule.token_in_list(t->code, mult_op_list)) {
-    operator = t->code;
+    operator = UniformParserModule.get_token(parser);
     UniformParserModule.next(parser);
     t = UniformParserModule.get_token(parser);
+
     factor(parser, tree);
-    // postfix: printf("%s ", UniformTokenModule.t_to_s(operator));
+    
+    UniformASTModule.insert_node(
+      tree,
+      UniformASTNodeModule.token_to_node(operator)
+    );
   }
 }
 
@@ -107,10 +124,14 @@ static void factor(UniformParser* parser, UniformASTExpressionNode* tree) {
     case T_IDENTIFIER:
       UniformParserModule.next(parser);
       break;
-    case T_NUMERIC:
+    case T_NUMERIC: {
+      UniformASTModule.insert_node(
+        tree,
+        UniformASTNodeModule.token_to_node(t)
+      );
       UniformParserModule.next(parser);
-      // postfix: printf("%s ", t->token_string);
       break;
+    }
     case T_STRING:
       UniformParserModule.next(parser);
       break;
@@ -121,7 +142,6 @@ static void factor(UniformParser* parser, UniformASTExpressionNode* tree) {
       UniformParserModule.next(parser);
       break;
     default:
-      // postfix: printf("\n todo: error \n");
       t->code = T_ERROR;
       break;
   }

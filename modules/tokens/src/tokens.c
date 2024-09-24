@@ -20,7 +20,7 @@ static const char *token_strings[] = {
   "[","]",
   "(",")",
   "+","-","*","/","^",":",";",",","?","!","|",">","<","~","%",
-  "|>","->","module","end","struct","func","case","return"
+  "|>","->","module","end","struct","func","case","return","neg"
 };
 
 UniformKeyWord kw1[] = {

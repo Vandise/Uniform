@@ -116,7 +116,21 @@ describe("Parser Test Suite", parser_test_suite)
     after(after_expressions)
 
     it("parses addition expressions")
-      UniformParserExpression.process(expressions_parser, NULL);
+      // 17 neg 42 + 4 / 2 3 * - 9 3 - 21 + *
+      UNIFORM_NODE_TYPE node_types[] = {
+        UNIFORM_LITERAL_NODE,UNIFORM_OPERATOR_NODE,UNIFORM_LITERAL_NODE,
+        UNIFORM_OPERATOR_NODE,UNIFORM_LITERAL_NODE,UNIFORM_OPERATOR_NODE,
+        UNIFORM_LITERAL_NODE,UNIFORM_LITERAL_NODE,UNIFORM_OPERATOR_NODE,
+        UNIFORM_OPERATOR_NODE,UNIFORM_LITERAL_NODE,UNIFORM_LITERAL_NODE,UNIFORM_OPERATOR_NODE,
+        UNIFORM_LITERAL_NODE,UNIFORM_OPERATOR_NODE,UNIFORM_OPERATOR_NODE
+      };
+
+      UniformASTExpressionNode* tree = UniformParserExpression.process(expressions_parser, NULL);
+      expect(tree->used) to equal(16)
+
+      for (int i = 0; i < tree->used; i++) {
+        expect(tree->nodes[i]->type) to equal(node_types[i])
+      }
     end
   end
 end

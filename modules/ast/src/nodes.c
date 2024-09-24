@@ -21,15 +21,14 @@ static UniformASTNode* token_to_node(UniformToken* token);
 // ============================
 
 static UniformASTNode* token_to_node(UniformToken* token) {
-  printf("\n creating token for %d \n", token->code);
+  UniformASTNode* node = malloc(sizeof(UniformASTNode));
+
+  //printf("token_to_node %s \n", UniformTokenModule.t_to_s(token->code));
+
   switch(token->code) {
     case UNDEFINED_TOKEN:
     case T_ERROR:
-    case T_MACRO:
-      break;
     case T_END_OF_FILE:
-    case T_NEWLINE:
-      break;
     case T_STRING:
     case T_MODULE:
     case T_END:
@@ -39,37 +38,30 @@ static UniformASTNode* token_to_node(UniformToken* token) {
     case T_RETURN:
     case T_IDENTIFIER:
     case T_CONSTANT:
-    case T_NUMERIC:
+      free(node);
       break;
-    case T_DOT:
-      break;
+    case T_NUMERIC: {
+      UniformASTLiteralNode* data = malloc(sizeof(UniformASTLiteralNode));
+      data->literal = token->literal;
+      node->type = UNIFORM_LITERAL_NODE;
+      node->data = (void*)data;
+      return node;
+    }
     case T_EQUAL:
-      break;
-    case T_OPEN_CURLY_BRACE:
-      break;
-    case T_CLOSE_CURLY_BRACE:
-      break;
-    case T_OPEN_BRACKET:
-      break;
-    case T_CLOSE_BRACKET:
-      break;
-    case T_OPEN_PAREN:
-      break;
-    case T_CLOSE_PAREN:
-      break;
     case T_PLUS:
-      break;
     case T_MINUS:
-      break;
     case T_STAR:
-      break;
     case T_SLASH:
-      break;
+    case T_NEGATE:
+    case T_GREATER_THAN:
+    case T_LESS_THAN: {
+      UniformASTOperatorNode* data = malloc(sizeof(UniformASTOperatorNode));
+      data->operator = token->code;
+      node->type = UNIFORM_OPERATOR_NODE;
+      node->data = (void*)data;
+      return node;
+    }
     case T_PIN:
-      break;
-    case T_COLON:
-      break;
-    case T_SEMICOLON:
       break;
     case T_COMMA:
       break;
@@ -79,10 +71,6 @@ static UniformASTNode* token_to_node(UniformToken* token) {
       break;
     case T_PIPE:
       break;
-    case T_GREATER_THAN:
-      break;
-    case T_LESS_THAN:
-      break;
     case T_TILDE:
       break;
     case T_PERCENT:
@@ -91,11 +79,13 @@ static UniformASTNode* token_to_node(UniformToken* token) {
       break;
     case T_LAMBDA:
       break;
-    case T_NEGATE:
-      break;
     default:
+      free(node);
       break;
   }
+
+  //printf("\n unknown node %d \n", token->code);
+
   return NULL;
 }
 
