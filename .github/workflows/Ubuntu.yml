@@ -30,3 +30,4 @@ jobs:
         ./bin/symboltable_tests
         ./bin/parser_tests
         ./bin/ast_tests
+        ./bin/compiler_tests
