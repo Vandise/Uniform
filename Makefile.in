@@ -39,8 +39,9 @@ endif
 -include modules/preprocessor/Makefile.in
 -include modules/parser/Makefile.in
 -include modules/ast/Makefile.in
+-include modules/compiler/Makefile.in
 
-all: logger fileutil errorutil tokens symboltable scanner preprocessor ast parser
+all: logger fileutil errorutil tokens symboltable scanner preprocessor ast parser compiler
 
 clean:
 	rm -rf .tmp/*.u
@@ -53,3 +54,4 @@ clean:
 	rm -rf modules/parser/obj/*.o
 	rm -rf modules/tokens/obj/*.o
 	rm -rf modules/ast/obj/*.o
+	rm -rf modules/compiler/obj/*.o

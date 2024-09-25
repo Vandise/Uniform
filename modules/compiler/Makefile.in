@@ -1,0 +1,35 @@
+COMPILER_DIR := modules/compiler
+COMPILER_LIB_NAME := lib/libuniformcompiler.$(ARCHIVE_EXT)
+
+COMPILER_FILES        := $(wildcard $(COMPILER_DIR)/src/*.c)
+COMPILER_HEADERS      := $(wildcard $(COMPILER_DIR)/inc/*.h)
+COMPILER_OBJECTS      := $(patsubst $(COMPILER_DIR)/src/%.c, $(COMPILER_DIR)/obj/%.o, $(COMPILER_FILES))
+
+COMPILER_TEST_FILES   := $(wildcard $(COMPILER_DIR)/test/*.c)
+COMPILER_TEST_OBJECTS := $(patsubst $(COMPILER_DIR)/test/%.c, $(COMPILER_DIR)/obj/%.o, $(COMPILER_TEST_FILES))
+
+compiler: compiler_mkdir compiler_add_headers compiler_module compiler_library compiler_tests
+
+compiler_mkdir:
+	@echo "\Compiler Module\n"
+	mkdir -p $(SYSINCDIR)/uniform/compiler
+
+compiler_add_headers:
+	cp $(COMPILER_HEADERS) $(SYSINCDIR)/uniform/compiler
+
+compiler_install:
+	cp $(COMPILER_LIB_NAME) $(SYSLIBDIR)
+
+compiler_module: $(COMPILER_OBJECTS)
+
+$(COMPILER_DIR)/obj/%.o: $(COMPILER_DIR)/src/%.c
+	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -c $< -o $@
+
+compiler_library:
+	$(ARCHIVER) rcs $(COMPILER_LIB_NAME) $(COMPILER_OBJECTS)
+
+compiler_tests: $(COMPILER_TEST_OBJECTS)
+	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -o bin/compiler_tests $(COMPILER_TEST_OBJECTS) $(COMPILER_OBJECTS) $(PARSER_OBJECTS) $(AST_LIB_NAME) $(PREPROCESSOR_LIB_NAME) $(LOGGER_LIB_NAME) $(FILE_UTIL_LIB_NAME) $(ERROR_UTIL_LIB_NAME) -lawry -lm
+
+$(COMPILER_TEST_OBJECTS): $(COMPILER_TEST_FILES)
+	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -c $< -o $@
