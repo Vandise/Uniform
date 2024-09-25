@@ -14,6 +14,7 @@ static UniformCompiler* init(UNIFORM_ARCH arch) {
   UniformCompiler* compiler = malloc(sizeof(UniformCompiler));
   compiler->architecture = arch;
   compiler->iopt_flags = 0;
+  compiler->node_index = 0;
 
   switch(arch) {
     case UNIFORM_X_86: {

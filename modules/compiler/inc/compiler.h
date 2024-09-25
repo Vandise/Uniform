@@ -12,15 +12,25 @@ typedef enum {
 } UNIFORM_ARCH;
 
 typedef enum {
-  UNIFORM_IOPT_NONE,
-  UNIFORM_IOPT_RAX_SET,
-  UNIFORM_IOPT_RCX_SET,
-  UNIFORM_IOPT_RDX_SET,
+  UIOPT_NONE,
+
+  UIOPT_RAX_SET,
+  UIOPT_RCX_SET,
+  UIOPT_RDX_SET,
+
+  UIOPT_RAX_PUSHED,
+  UIOPT_RCX_PUSHED,
+  UIOPT_RDX_PUSHED,
+
+  UIOPT_RAX_POPPED,
+  UIOPT_RCX_POPPED,
+  UIOPT_RDX_POPPED
 } UNIFORM_IOPT_X86_64_FLAG;
 
 typedef struct UniformCompilerStruct {
   UNIFORM_ARCH architecture;
   int iopt_flags;
+  int node_index;
 } UniformCompiler;
 
 struct UniformCompilerModuleStruct {
