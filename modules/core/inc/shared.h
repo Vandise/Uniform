@@ -3,9 +3,11 @@
 
 #include "uniform/symboltable/shared.h"
 
+#define UNIFORM_INTEGER_TYPE "Integer"
+
 struct UniformCoreIntegerModuleStruct {
   void (*init)(UniformSymbolTable*);
-} UniformCoreIntegerModule;
+};
 
 extern struct UniformCoreIntegerModuleStruct UniformCoreIntegerModule;
 
