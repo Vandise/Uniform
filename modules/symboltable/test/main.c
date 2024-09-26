@@ -1,7 +1,6 @@
 #include "awry/awry.h"
 #include "uniform/symboltable/shared.h"
 
-
 char* symbols[] = {
   "weight", "height", "area", "largestringonright"
 };
@@ -22,6 +21,7 @@ define_fixture(after, after_all) {
 describe("SymbolTable Test Suite", symboltable_test_suite)
   before(before_all)
   after(after_all)
+
 
   context(".insert")
     it("creates the binary tree")

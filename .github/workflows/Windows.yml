@@ -72,6 +72,7 @@ jobs:
         C:\tools\msys64\usr\bin\bash -lc "ldd ./bin/parser_tests.exe"
         C:\tools\msys64\usr\bin\bash -lc "ldd ./bin/ast_tests.exe"
         C:\tools\msys64\usr\bin\bash -lc "ldd ./bin/compiler_tests.exe"
+        C:\tools\msys64\usr\bin\bash -lc "ldd ./bin/corelib_tests.exe"
       env:
         HOME: ${{ runner.workspace }}/uniform
         MINGW_INSTALLS: ${{ matrix.task.installs }}

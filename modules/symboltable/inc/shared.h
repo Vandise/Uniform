@@ -23,8 +23,14 @@ typedef enum {
   UNIFORM_VARIABLE_DEFINITION,
   UNIFORM_FUNCTION_DEFINITION,
   UNIFORM_STRUCT_DEFINITION,
-  UNIFORM_STRUCT_FIELD_DEFINITION
+  UNIFORM_STRUCT_FIELD_DEFINITION,
+  UNIFORM_TYPE_DEFINITION
 } UNIFORM_DEFINITION_TYPE;
+
+typedef enum {
+  UNIFORM_NO_FORM,
+  UNIFORM_SCALAR_FORM
+} UNIFORM_TYPE_FORM;
 
 typedef struct UniformDefinitionStruct {
   UNIFORM_DEFINITION_TYPE type;
@@ -46,6 +52,13 @@ typedef struct UniformDefinitionStruct {
   } definition;
 } UniformDefinition;
 
+typedef struct UniformSymbolTableTypeStruct {
+  UNIFORM_TYPE_FORM form;
+  int size;
+  struct UniformSymbolTableNodeStruct* type_idp;
+
+} UniformSymbolTableType;
+
 typedef struct UniformSymbolTableNodeStruct {
   struct UniformSymbolTableNodeStruct *left, *right;
   struct UniformSymbolTableNodeStruct *next;
@@ -53,10 +66,11 @@ typedef struct UniformSymbolTableNodeStruct {
   char *name;
   char *info;
 
+  UniformDefinition definition;
+  UniformSymbolTableType* type;
+
   int level;
   int label_index;
-
-  UniformDefinition definition;
 } UniformSymbolTableNode;
 
 typedef struct UniformSymbolTableStruct {

@@ -1,0 +1,35 @@
+CORE_DIR := modules/core
+CORE_LIB_NAME := lib/libuniformcore.$(ARCHIVE_EXT)
+
+CORE_FILES        := $(wildcard $(CORE_DIR)/src/*.c)
+CORE_HEADERS      := $(wildcard $(CORE_DIR)/inc/*.h)
+
+CORE_OBJECTS      := $(patsubst $(CORE_DIR)/src/%.c, $(CORE_DIR)/obj/%.o, $(CORE_FILES))
+CORE_TEST_FILES   := $(wildcard $(CORE_DIR)/test/*.c)
+CORE_TEST_OBJECTS := $(patsubst $(CORE_DIR)/test/%.c, $(CORE_DIR)/obj/%.o, $(CORE_TEST_FILES))
+
+corelib: core_mkdir core_add_headers core_module core_library corelib_tests
+
+core_mkdir:
+	@echo "\Core Lib\n"
+	mkdir -p $(SYSINCDIR)/uniform/core
+
+core_add_headers:
+	cp $(CORE_HEADERS) $(SYSINCDIR)/uniform/core
+
+core_install:
+	cp $(CORE_LIB_NAME) $(SYSLIBDIR)
+
+core_module: $(CORE_OBJECTS) $(CORE_TEST_OBJECTS)
+
+$(CORE_DIR)/obj/%.o: $(CORE_DIR)/src/%.c
+	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -c $< -o $@
+
+core_library:
+	$(ARCHIVER) rcs $(CORE_LIB_NAME) $(CORE_OBJECTS)
+
+corelib_tests:
+	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -o bin/corelib_tests $(CORE_TEST_OBJECTS) $(CORE_OBJECTS) $(SYMBOLTABLE_LIB_NAME) -lawry -lm
+
+$(CORE_DIR)/obj/%.o: $(CORE_DIR)/test/%.c
+	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -c $< -o $@

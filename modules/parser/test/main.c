@@ -17,7 +17,9 @@
 #endif
 
 UniformPreprocessor* expressions_preprocessor = NULL;
+UniformPreprocessor* statements_preprocessor  = NULL;
 UniformParser* expressions_parser = NULL;
+UniformParser* statements_parser = NULL;
 
 define_fixture(before, before_expressions) {
   expressions_preprocessor = UniformPreprocessorModule.init(SCANNER_LIB, 0);
@@ -29,6 +31,18 @@ define_fixture(before, before_expressions) {
 define_fixture(after, after_expressions) {
   UniformParserModule.close(expressions_parser);
   UniformPreprocessorModule.close(expressions_preprocessor);
+}
+
+define_fixture(before, before_statements) {
+  statements_preprocessor = UniformPreprocessorModule.init(SCANNER_LIB, 0);
+  UniformPreprocessorModule.process(statements_preprocessor, "modules/parser/test/files/statements.u", NULL);
+  
+  statements_parser = UniformParserModule.init(statements_preprocessor->token_array);
+}
+
+define_fixture(after, after_statements) {
+  UniformParserModule.close(statements_parser);
+  UniformPreprocessorModule.close(statements_preprocessor);
 }
 
 describe("Parser Test Suite", parser_test_suite)
@@ -131,6 +145,16 @@ describe("Parser Test Suite", parser_test_suite)
       for (int i = 0; i < tree->used; i++) {
         expect(tree->nodes[i]->type) to equal(node_types[i])
       }
+    end
+  end
+
+  context(".statements")
+    before(before_statements)
+    after(after_statements)
+
+    it("parses assignment statements")
+      UniformASTNode* node = UniformParserStatement.process(statements_parser);
+      expect(node->type) to equal(UNIFORM_ASSIGNMENT_NODE)
     end
   end
 end

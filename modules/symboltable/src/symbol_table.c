@@ -61,6 +61,9 @@ static void clear_nodes(UniformSymbolTableNode* node) {
   clear_nodes(node->left);
 
   free(node->name);
+  if (node->type != NULL) {
+    free(node->type);
+  }
   free(node);
 }
 

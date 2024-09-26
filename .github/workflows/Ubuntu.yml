@@ -31,3 +31,4 @@ jobs:
         ./bin/parser_tests
         ./bin/ast_tests
         ./bin/compiler_tests
+        ./bin/corelib_tests

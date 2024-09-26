@@ -36,7 +36,13 @@ static UniformASTNode* token_to_node(UniformToken* token) {
     case T_FUNC:
     case T_CASE:
     case T_RETURN:
-    case T_IDENTIFIER:
+    case T_IDENTIFIER: {
+      UniformASTAssignmentNode* data = malloc(sizeof(UniformASTAssignmentNode));
+      strcpy(data->identifier, token->token_string);
+      node->type = UNIFORM_ASSIGNMENT_NODE;
+      node->data = (void*)data;
+      return node;      
+    }
     case T_CONSTANT:
       free(node);
       break;
