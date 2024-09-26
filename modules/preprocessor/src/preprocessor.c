@@ -50,6 +50,13 @@ static UniformPreprocessor* init(const char *library, int emit) {
 
   if (handle == NULL) {
     UniformLogger.log_fatal("Preprocessor::init(error: unable to open library %s)", library);
+    UniformErrorUtil.trace_error(
+      UNIFORM_MISSING_CORE_LIBRARY_ERROR,
+      NULL,
+      0,
+      0,
+      library
+    );
     return NULL;
   }
 
@@ -194,6 +201,14 @@ static int process_macro(UniformPreprocessor *preprocessor, UniformScanner *scan
   }
 
   UniformLogger.log_fatal("Preprocessor::process_macro(error: macro %s not found)", scanner->current_token.token_string);
+
+  UniformErrorUtil.trace_error(
+    UNIFORM_INVALID_MACRO_ERROR,
+    scanner->source_name,
+    scanner->line_number,
+    scanner->buffer_offset,
+    scanner->current_token.token_string
+  );
 
   return 1;
 }

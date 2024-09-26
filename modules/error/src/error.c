@@ -5,17 +5,21 @@
 // ============================
 
 static const char *error_codes[] = {
-  "Unknown error.",
-  "File not found.",
-  "Syntax error.",
-  "Macro Syntax Error"
+  "Unknown Error",
+  "File Not Found",
+  "Syntax Error",
+  "Macro Syntax Error",
+  "Invalid Macro Error",
+  "Missing Core Library"
 };
 
 static const char *error_message_fmt[] = {
   "An unknown error has occurred.",
   "File was not found: %s.",
   "Unexpected token %s, expected %s",
-  "Unexpected token %s, expected %s."
+  "Unexpected token %s, expected %s.",
+  "Invalid macro \"%s\" called.",
+  "Uniform was unable to load the required library %s."
 };
 
 // ============================
