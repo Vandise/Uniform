@@ -35,9 +35,10 @@ static UniformScanner* init(const char *file_name) {
   scanner->errored = 0;
 
   if (open_source_file(scanner) == 0) {
-    // todo: Fatal error with errors module.
     UniformLogger.log_fatal("Scanner::get_source_line(error: unable to open source file %s)", file_name);
     scanner->errored = 1;
+    scanner->error_code = UNIFORM_SCANNER_FILE_NOT_FOUND_ERROR;
+    
     return scanner;
   }
 
@@ -281,7 +282,7 @@ static void accumulate_value(UniformScanner *scanner, double *valuep) {
   if (scanner->char_table[scanner->current_char] != DIGIT_CHAR_CODE) {
     scanner->current_token.code = T_ERROR;
     scanner->errored = 1;
-    // invalid numeric
+    scanner->error_code = UNIFORM_SCANNER_INVALID_NUMERIC_ERROR;
     return;
   }
 
@@ -291,8 +292,8 @@ static void accumulate_value(UniformScanner *scanner, double *valuep) {
     if (++scanner->digit_count <= DECIMAL_DIG) {
       value = 10 * value + (scanner->current_char - '0');
     } else {
-      // todo: precision lost
       scanner->errored = 1;
+      scanner->error_code = UNIFORM_SCANNER_PRECISION_LOST_ERROR;
     }
 
     get_character(scanner);
@@ -342,13 +343,34 @@ static void get_special(UniformScanner *scanner) {
         scanner->current_token.code = T_PIPE_OPERATOR;
         get_character(scanner);
       }
+      if (scanner->current_char == '|') {
+        scanner->current_token.code = T_OR;
+        get_character(scanner);
+      }
       break;
-    case '>':   scanner->current_token.code = T_GREATER_THAN;  get_character(scanner);  break;
-    case '<':   scanner->current_token.code = T_LESS_THAN;     get_character(scanner);  break;
+    case '>': {
+      scanner->current_token.code = T_GREATER_THAN; 
+      get_character(scanner);
+      if (scanner->current_char == '=') {
+        scanner->current_token.code = T_GREATER_THAN_OR_EQUAL;
+        get_character(scanner);
+      }
+      break;
+    }
+    case '<': {
+      scanner->current_token.code = T_LESS_THAN;
+      get_character(scanner);
+      if (scanner->current_char == '=') {
+        scanner->current_token.code = T_LESS_THAN_OR_EQUAL;
+        get_character(scanner);
+      }
+      break;
+    }
     case '~':   scanner->current_token.code = T_TILDE;         get_character(scanner);  break;
     default:
       UniformLogger.log_info("Scanner::get_special(status: errored)");
       scanner->errored = 1;
+      scanner->error_code = UNIFORM_SCANNER_JAMMED_ERROR;
       scanner->current_token.code = T_ERROR;
   }
 

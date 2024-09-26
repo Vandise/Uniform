@@ -1,7 +1,7 @@
 @import("./import")
 module User
   42 0.42
-  . = { } [ ] + - * / ^ : ; , ? ! ( ) | > < ~ %
+  . = { } [ ] + - * / ^ : ; , ? ! ( ) | > < ~ % || >= <=
   |> ->
   func struct case return
 end

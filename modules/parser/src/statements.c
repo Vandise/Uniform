@@ -4,10 +4,6 @@
 //          Locals
 // ============================
 
-// todo: >= <= %, binary ops etc
-// static UNIFORM_TOKEN_CODE rel_op_list[]  = { T_LESS_THAN, T_EQUAL, T_GREATER_THAN, 0 };
-
-
 // ============================
 //          Forwards
 // ============================

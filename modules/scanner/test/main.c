@@ -118,10 +118,11 @@ describe("Scanner Test Suite", scanner_test_suite)
         UNIFORM_TOKEN_CODE special_tokens[] = {
           T_DOT, T_EQUAL, T_OPEN_CURLY_BRACE, T_CLOSE_CURLY_BRACE, T_OPEN_BRACKET, T_CLOSE_BRACKET,
           T_PLUS, T_MINUS, T_STAR, T_SLASH, T_PIN, T_COLON, T_SEMICOLON, T_COMMA, T_QUESTION, T_BANG,
-          T_OPEN_PAREN, T_CLOSE_PAREN, T_PIPE, T_GREATER_THAN, T_LESS_THAN, T_TILDE, T_PERCENT
+          T_OPEN_PAREN, T_CLOSE_PAREN, T_PIPE, T_GREATER_THAN, T_LESS_THAN, T_TILDE, T_PERCENT, T_OR,
+          T_GREATER_THAN_OR_EQUAL, T_LESS_THAN_OR_EQUAL
         };
 
-        for (int i = 0; i < 23; i++) {
+        for (int i = 0; i < 26; i++) {
           UniformScannerModule.get_token(scanner);
           expect(scanner->current_token.code) to equal(special_tokens[i]) 
         }
@@ -191,7 +192,7 @@ describe("Scanner Tokens Test Suite", scanner_tokens_test_suite)
 end
 
 int main(void) {
-  UniformLogger.log_level = UNIFORM_LOG_INFO;
+  UniformLogger.log_level = UNIFORM_LOG_NONE;//UNIFORM_LOG_INFO;
 
   UniformLogger.log_info("Running testsuite for Scanner Module version %d", UNIFORM_SCANNER_VERSION);
 

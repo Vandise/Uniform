@@ -32,6 +32,14 @@ typedef enum {
   EOF_CHAR_CODE
 } UNIFORM_CHAR_CODE;
 
+typedef enum {
+  UNIFORM_UNDEFINED_SCANNER_ERROR,
+  UNIFORM_SCANNER_JAMMED_ERROR,
+  UNIFORM_SCANNER_FILE_NOT_FOUND_ERROR,
+  UNIFORM_SCANNER_INVALID_NUMERIC_ERROR,
+  UNIFORM_SCANNER_PRECISION_LOST_ERROR
+} UNIFORM_SCANNER_ERROR_CODE;
+
 typedef struct UniformScannerStruct {
   unsigned int line_number;
   unsigned int level;
@@ -50,6 +58,7 @@ typedef struct UniformScannerStruct {
   UniformToken current_token;
 
   unsigned int errored;
+  UNIFORM_SCANNER_ERROR_CODE error_code;
 
 } UniformScanner;
 
