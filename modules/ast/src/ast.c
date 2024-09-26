@@ -17,6 +17,7 @@ static struct UniformASTStruct* init_tree(int n_nodes) {
   tree->size = n_nodes;
   tree->used = 0;
   tree->nodes = malloc(sizeof(UniformASTNode*) * n_nodes);
+  tree->type = NULL;
 
   return tree;
 }

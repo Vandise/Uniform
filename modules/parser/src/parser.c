@@ -4,7 +4,7 @@
 //          Forwards
 // ============================
 
-static UniformParser* init(UniformTokenArray* tokens);
+static UniformParser* init(UniformSymbolTable* symbol_table, UniformTokenArray* tokens);
 static UniformToken* get_token(UniformParser* parser);
 static int token_in_list(UNIFORM_TOKEN_CODE code, UNIFORM_TOKEN_CODE token_list[]);
 static void close(UniformParser* parser);
@@ -13,10 +13,11 @@ static void close(UniformParser* parser);
 //        Implementation
 // ============================
 
-static UniformParser* init(UniformTokenArray* tokens) {
+static UniformParser* init(UniformSymbolTable* symbol_table, UniformTokenArray* tokens) {
   UniformParser* parser = malloc(sizeof(UniformParser));
   parser->token_arr = tokens;
   parser->token_index = 0;
+  parser->symbol_table = symbol_table;
 
   return parser;
 }

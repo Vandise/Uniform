@@ -124,23 +124,38 @@ static void factor(UniformParser* parser, UniformASTExpressionNode* tree) {
     case T_IDENTIFIER:
       UniformParserModule.next(parser);
       break;
+
     case T_NUMERIC: {
+
+      if (tree->type == NULL) {
+        UNIFORM_LITERAL ltype = t->literal.type;
+        UniformSymbolTableNode* type = NULL;
+        if (ltype == I_32LIT || ltype == I_64LIT) {
+          tree->type = UniformSymbolTableModule.search(parser->symbol_table, UNIFORM_INTEGER_TYPE);
+        }
+      }
+
       UniformASTModule.insert_node(
         tree,
         UniformASTNodeModule.token_to_node(t)
       );
+
       UniformParserModule.next(parser);
+
       break;
     }
+
     case T_STRING:
       UniformParserModule.next(parser);
       break;
+
     case T_OPEN_PAREN:
       UniformParserModule.next(parser);
       process(parser, tree);
       // todo: assert is T_CLOSE_PAREN
       UniformParserModule.next(parser);
       break;
+
     default:
       t->code = T_ERROR;
       break;

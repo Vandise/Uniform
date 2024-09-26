@@ -1,9 +1,13 @@
 #ifndef __UNIFORM_ASTH
 #define __UNIFORM_ASTH 1
 
+#include "uniform/symboltable/shared.h"
+
 typedef struct UniformASTStruct {
   int size;
   int used;
+
+  UniformSymbolTableNode *type;
 
   UniformASTNode** nodes;
 } UniformAST, UniformASTExpressionNode;

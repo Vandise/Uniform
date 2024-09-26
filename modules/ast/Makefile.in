@@ -29,7 +29,7 @@ ast_library:
 	$(ARCHIVER) rcs $(AST_LIB_NAME) $(AST_OBJECTS)
 
 ast_tests: $(AST_TEST_OBJECTS)
-	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -o bin/ast_tests $(AST_TEST_OBJECTS) $(AST_OBJECTS) -lawry -lm
+	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -o bin/ast_tests $(AST_TEST_OBJECTS) $(AST_OBJECTS) $(SYMBOLTABLE_LIB_NAME) -lawry -lm
 
 $(AST_TEST_OBJECTS): $(AST_TEST_FILES)
 	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -c $< -o $@

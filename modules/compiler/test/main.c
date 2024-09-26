@@ -2,6 +2,7 @@
 #include "uniform/compiler/shared.h"
 #include "uniform/parser/shared.h"
 #include "uniform/preprocessor/shared.h"
+#include "uniform/core/shared.h"
 
 #if defined(_WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
   #define SCANNER_LIB "lib/libuniformscanner.dll"
@@ -16,14 +17,18 @@
 #endif
 
 UniformCompiler* compiler;
+UniformSymbolTable* table;
 
 define_fixture(before, before_all) {
   compiler = UniformCompilerModule.init(UNIFORM_X_86_64);
+  table = UniformSymbolTableModule.init();
+  UniformCoreIntegerModule.init(table);
 }
 
 define_fixture(after, after_all) {
   free(compiler);
   compiler = NULL;
+  UniformSymbolTableModule.clear(table);
 }
 
 describe("Compiler Test Suite", compiler_test_suite)
@@ -44,7 +49,7 @@ describe("Compiler Test Suite", compiler_test_suite)
     it("compiles expressions")
       UniformPreprocessor* expressions_preprocessor = UniformPreprocessorModule.init(SCANNER_LIB, 0);
         UniformPreprocessorModule.process(expressions_preprocessor, "modules/compiler/test/files/expression.u", NULL);
-      UniformParser* expressions_parser = UniformParserModule.init(expressions_preprocessor->token_array);
+      UniformParser* expressions_parser = UniformParserModule.init(table, expressions_preprocessor->token_array);
 
       UniformASTExpressionNode* tree = UniformParserExpression.process(expressions_parser, NULL);
       expect(tree->used) to equal(16)

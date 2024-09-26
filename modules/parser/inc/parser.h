@@ -5,15 +5,18 @@
 #include "uniform/error/shared.h"
 #include "uniform/tokens/shared.h"
 #include "uniform/symboltable/shared.h"
+#include "uniform/core/shared.h"
 
 typedef struct UniformParserStruct {
   unsigned int token_index;
+
+  UniformSymbolTable* symbol_table;
 
   UniformTokenArray* token_arr;
 } UniformParser;
 
 struct UniformParserModuleStruct {
-  UniformParser* (*init)(UniformTokenArray*);
+  UniformParser* (*init)(UniformSymbolTable*, UniformTokenArray*);
 
   UniformToken* (*get_token)(UniformParser*);
   UniformToken* (*peek)(UniformParser*, int);
