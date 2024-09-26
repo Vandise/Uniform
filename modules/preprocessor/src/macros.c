@@ -20,6 +20,14 @@ static int import_macro(UniformPreprocessor *preprocessor, UniformScanner *scann
 
   if (scanner->current_token.code != T_STRING) {
     UniformLogger.log_fatal("Macros::import_macro(error: invalid macro token. expected String)");
+    UniformErrorUtil.trace_error(
+      UNIFORM_SYNTAX_ERROR,
+      scanner->source_name,
+      scanner->line_number,
+      scanner->buffer_offset,
+      preprocessor->token_module->t_to_s(scanner->current_token.code),
+      preprocessor->token_module->t_to_s(T_STRING)
+    );
     return 1;
   }
 
