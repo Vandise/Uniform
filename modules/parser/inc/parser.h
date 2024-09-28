@@ -9,9 +9,7 @@
 
 typedef struct UniformParserStruct {
   unsigned int token_index;
-
   UniformSymbolTable* symbol_table;
-
   UniformTokenArray* token_arr;
 } UniformParser;
 

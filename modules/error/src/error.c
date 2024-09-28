@@ -10,7 +10,9 @@ static const char *error_codes[] = {
   "Syntax Error",
   "Macro Syntax Error",
   "Invalid Macro Error",
-  "Missing Core Library"
+  "Missing Core Library",
+  "Type Error",
+  "Undefined Type Error"
 };
 
 static const char *error_message_fmt[] = {
@@ -19,7 +21,9 @@ static const char *error_message_fmt[] = {
   "Unexpected token %s, expected %s",
   "Unexpected token %s, expected %s.",
   "Invalid macro \"%s\" called.",
-  "Uniform was unable to load the required library %s."
+  "Uniform was unable to load the required library %s.",
+  "Type of %s is not %s.",
+  "Requested Type %s is not defined."
 };
 
 // ============================

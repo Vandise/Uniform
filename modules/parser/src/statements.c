@@ -44,16 +44,42 @@ static UniformASTNode* assignment_statement(UniformParser* parser) {
   UniformParserModule.next(parser); // T_CONSTANT
 
   t = UniformParserModule.get_token(parser);
-  strcpy(data->data_type, t->token_string);
+  UniformSymbolTableNode* n = UniformSymbolTableModule.search(parser->symbol_table, t->token_string);
 
-  UniformLogger.log_info("UniformParser::Statements::assignment_statement(id: %s, type: %s)", data->identifier, data->data_type);
+  if (n == NULL) {
+    UniformErrorUtil.trace_error(
+      UNIFORM_UNDEFINED_TYPE_ERROR,
+      t->source_name,
+      t->line_number,
+      t->buffer_offset,
+      t->token_string
+    );
+    free(node);
+    return NULL;
+  }
+
+  UniformLogger.log_info("UniformParser::Statements::assignment_statement(id: %s, type: %s)", data->identifier, t->token_string);
 
   UniformParserModule.next(parser); // T_EQUAL
   UniformParserModule.next(parser);
 
   data->expressions = UniformParserExpression.process(parser, NULL);
 
-  return node;
+  if(UniformParserType.assign_compatible(n->type, data->expressions->type->type)) {
+    return node;
+  }
+
+  UniformErrorUtil.trace_error(
+    UNIFORM_TYPE_ERROR,
+    t->source_name,
+    t->line_number,
+    t->buffer_offset,
+    t->token_string,
+    data->expressions->type->name
+  );
+
+  free(node);
+  return NULL;
 }
 
 // ============================

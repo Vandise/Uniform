@@ -2,6 +2,7 @@
 #define __UNIFORM_ASTNODESH 1
 
 #include <string.h>
+#include "uniform/symboltable/shared.h"
 
 typedef struct UniformASTStruct UniformAST, UniformASTExpressionNode;
 
@@ -28,7 +29,7 @@ typedef struct UniformASTOperatorNodeStruct {
 
 typedef struct UniformASTAssignmentNodeStruct {
   char identifier[128];
-  char data_type[128]; // todo, set to id pointer in symbol table
+  UniformSymbolTableNode* type;
   UniformASTExpressionNode* expressions;
 } UniformASTAssignmentNode;
 
