@@ -50,6 +50,8 @@ typedef struct UniformDefinitionStruct {
       struct UniformSymbolTableStruct*     local_symbol_table;
     } func;
   } definition;
+
+  struct { int offset; } data;
 } UniformDefinition;
 
 typedef struct UniformSymbolTableTypeStruct {
@@ -74,13 +76,16 @@ typedef struct UniformSymbolTableNodeStruct {
 } UniformSymbolTableNode;
 
 typedef struct UniformSymbolTableStruct {
-  UniformSymbolTableNode* root_node;
+  UniformSymbolTableNode* global_node;
+
+  int current_scope;
+  UniformSymbolTableNode* local_scope[0x80];
 } UniformSymbolTable;
 
 struct UniformSymbolTableModuleStruct {
   UniformSymbolTable* (*init)();
-  UniformSymbolTableNode* (*search)(UniformSymbolTable* table, char *name);
-  UniformSymbolTableNode* (*insert)(UniformSymbolTable* table, char *name);
+  UniformSymbolTableNode* (*search_global)(UniformSymbolTable* table, char *name);
+  UniformSymbolTableNode* (*insert_global)(UniformSymbolTable* table, char *name);
   void (*clear)(UniformSymbolTable* table);
 };
 

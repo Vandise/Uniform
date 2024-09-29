@@ -44,7 +44,7 @@ static UniformASTNode* assignment_statement(UniformParser* parser) {
   UniformParserModule.next(parser); // T_CONSTANT
 
   t = UniformParserModule.get_token(parser);
-  UniformSymbolTableNode* n = UniformSymbolTableModule.search(parser->symbol_table, t->token_string);
+  UniformSymbolTableNode* n = UniformSymbolTableModule.search_global(parser->symbol_table, t->token_string);
 
   if (n == NULL) {
     UniformErrorUtil.trace_error(

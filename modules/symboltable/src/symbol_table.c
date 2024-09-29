@@ -4,8 +4,8 @@
 //          Forwards
 // ============================
 
-static UniformSymbolTableNode* symboltable_search(UniformSymbolTable* table, char *name);
-static UniformSymbolTableNode* symboltable_insert(UniformSymbolTable* table, char *name);
+static UniformSymbolTableNode* symboltable_search_global(UniformSymbolTable* table, char *name);
+static UniformSymbolTableNode* symboltable_insert_global(UniformSymbolTable* table, char *name);
 
 // ============================
 //        Implementation
@@ -13,13 +13,14 @@ static UniformSymbolTableNode* symboltable_insert(UniformSymbolTable* table, cha
 
 static UniformSymbolTable* init() {
   UniformSymbolTable* table = malloc(sizeof(UniformSymbolTable));
-  table->root_node = NULL;
+  table->global_node = NULL;
+  table->current_scope = 0;
 
   return table;
 }
 
-static UniformSymbolTableNode* symboltable_search(UniformSymbolTable* table, char *name) {
-  UniformSymbolTableNode* node = table->root_node;
+static UniformSymbolTableNode* symboltable_search_global(UniformSymbolTable* table, char *name) {
+  UniformSymbolTableNode* node = table->global_node;
   while(node != NULL) {
     int str_cmp = strcmp(name, node->name);
     if (str_cmp == 0) {
@@ -30,8 +31,8 @@ static UniformSymbolTableNode* symboltable_search(UniformSymbolTable* table, cha
   return NULL;
 }
 
-static UniformSymbolTableNode* symboltable_insert(UniformSymbolTable* table, char *name) {
-  UniformSymbolTableNode** location_node = &(table->root_node); // inserting a node causes a pointer to be changed
+static UniformSymbolTableNode* symboltable_insert_global(UniformSymbolTable* table, char *name) {
+  UniformSymbolTableNode** location_node = &(table->global_node); // inserting a node causes a pointer to be changed
   UniformSymbolTableNode*  test_node;
   UniformSymbolTableNode*  node = malloc(sizeof(UniformSymbolTableNode));
 
@@ -68,7 +69,7 @@ static void clear_nodes(UniformSymbolTableNode* node) {
 }
 
 static void clear(UniformSymbolTable* table) {
-  clear_nodes(table->root_node);
+  clear_nodes(table->global_node);
   free(table);
 }
 
@@ -78,7 +79,7 @@ static void clear(UniformSymbolTable* table) {
 
 struct UniformSymbolTableModuleStruct UniformSymbolTableModule = {
   .init   = init,
-  .search = symboltable_search,
-  .insert = symboltable_insert,
+  .search_global = symboltable_search_global,
+  .insert_global = symboltable_insert_global,
   .clear =  clear
 };

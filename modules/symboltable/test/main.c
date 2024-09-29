@@ -10,7 +10,7 @@ UniformSymbolTable* table;
 define_fixture(before, before_all) {
   table = UniformSymbolTableModule.init();
   for (int i = 0; i < 4; i++) {
-    UniformSymbolTableModule.insert(table, symbols[i]);
+    UniformSymbolTableModule.insert_global(table, symbols[i]);
   }
 }
 
@@ -25,24 +25,24 @@ describe("SymbolTable Test Suite", symboltable_test_suite)
 
   context(".insert")
     it("creates the binary tree")
-      expect(table->root_node->name) to equal("weight")
-      expect(table->root_node->left->name) to equal("height")
-      expect(table->root_node->left->left->name) to equal("area")
-      expect(table->root_node->left->right->name) to equal("largestringonright")
+      expect(table->global_node->name) to equal("weight")
+      expect(table->global_node->left->name) to equal("height")
+      expect(table->global_node->left->left->name) to equal("area")
+      expect(table->global_node->left->right->name) to equal("largestringonright")
     end
   end
 
   context(".search")
     when("the node is found")
       it("returns the node")
-        UniformSymbolTableNode* n = UniformSymbolTableModule.search(table, "height");
+        UniformSymbolTableNode* n = UniformSymbolTableModule.search_global(table, "height");
         expect(n->name) to equal("height")
       end
     end
 
     when("the node is not found")
       it("returns NULL")
-        UniformSymbolTableNode* n = UniformSymbolTableModule.search(table, "undefined");
+        UniformSymbolTableNode* n = UniformSymbolTableModule.search_global(table, "undefined");
         expect((void*)n) to equal(NULL)
       end
     end

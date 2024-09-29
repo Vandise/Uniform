@@ -11,7 +11,7 @@ static void init(UniformSymbolTable* table);
 // ============================
 
 static void init(UniformSymbolTable* table) {
-  UniformSymbolTableNode* IntegerTypeNode = UniformSymbolTableModule.insert(table, UNIFORM_INTEGER_TYPE);
+  UniformSymbolTableNode* IntegerTypeNode = UniformSymbolTableModule.insert_global(table, UNIFORM_INTEGER_TYPE);
   IntegerTypeNode->definition.type = UNIFORM_TYPE_DEFINITION;
 
   IntegerTypeNode->type = malloc(sizeof(UniformSymbolTableType));

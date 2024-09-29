@@ -131,7 +131,7 @@ static void factor(UniformParser* parser, UniformASTExpressionNode* tree) {
         UNIFORM_LITERAL ltype = t->literal.type;
         UniformSymbolTableNode* type = NULL;
         if (ltype == I_32LIT || ltype == I_64LIT) {
-          tree->type = UniformSymbolTableModule.search(parser->symbol_table, UNIFORM_INTEGER_TYPE);
+          tree->type = UniformSymbolTableModule.search_global(parser->symbol_table, UNIFORM_INTEGER_TYPE);
         }
       }
 
