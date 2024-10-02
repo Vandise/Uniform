@@ -22,7 +22,6 @@ describe("SymbolTable Test Suite", symboltable_test_suite)
   before(before_all)
   after(after_all)
 
-
   context(".insert")
     it("creates the binary tree")
       expect(table->global_node->name) to equal("weight")
@@ -44,6 +43,43 @@ describe("SymbolTable Test Suite", symboltable_test_suite)
       it("returns NULL")
         UniformSymbolTableNode* n = UniformSymbolTableModule.search_global(table, "undefined");
         expect((void*)n) to equal(NULL)
+      end
+    end
+  end
+
+  context(".insert_module")
+    when("the module has no parent")
+      it("gets entered into the root scope")
+        char* name = "TestModule";
+        UniformSymbolTableNode*  node = malloc(sizeof(UniformSymbolTableNode));
+        node->name = malloc(strlen(name) + 1);
+        strcpy(node->name, name);
+
+        UniformSymbolTableModule.insert_module(table, node);
+
+        expect(table->global_node->left->left->left->name) to equal(name)
+      end
+    end
+
+    when("the module has a parent")
+      it("gets entered into the module scope")
+        char* name = "TestModule";
+        char* sub_name = "TestSubModule";
+
+        UniformSymbolTableNode*  node    = malloc(sizeof(UniformSymbolTableNode));
+        UniformSymbolTableNode*  subnode = malloc(sizeof(UniformSymbolTableNode));
+        subnode->definition.info.module.parent = node;
+
+        node->name    = malloc(strlen(name) + 1);
+        subnode->name = malloc(strlen(sub_name) + 1);
+        strcpy(node->name, name);
+        strcpy(subnode->name, sub_name);
+
+        UniformSymbolTableModule.insert_module(table, node);
+        UniformSymbolTableModule.insert_module(table, subnode);
+
+        expect(table->global_node->left->left->left->name) to equal(name)
+        expect(node->definition.info.module.symbol_table->global_node->name) to equal(sub_name)
       end
     end
   end

@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "uniform/tokens/shared.h"
 
@@ -24,7 +25,8 @@ typedef enum {
   UNIFORM_FUNCTION_DEFINITION,
   UNIFORM_STRUCT_DEFINITION,
   UNIFORM_STRUCT_FIELD_DEFINITION,
-  UNIFORM_TYPE_DEFINITION
+  UNIFORM_TYPE_DEFINITION,
+  UNIFORM_MODULE_DEFINITION
 } UNIFORM_DEFINITION_TYPE;
 
 typedef enum {
@@ -41,6 +43,11 @@ typedef struct UniformDefinitionStruct {
     } constant;
 
     struct {
+      struct UniformSymbolTableNodeStruct* parent;
+      struct UniformSymbolTableStruct* symbol_table;
+    } module;
+
+    struct {
       int param_count;
       int param_size;
       int locals_size;
@@ -49,9 +56,9 @@ typedef struct UniformDefinitionStruct {
       struct UniformSymbolTableNodeStruct* locals;
       struct UniformSymbolTableStruct*     local_symbol_table;
     } func;
-  } description;
 
-  struct { int offset; } data;
+    struct { int offset; } data;
+  } info;
 } UniformDefinition;
 
 typedef struct UniformSymbolTableTypeStruct {
@@ -84,9 +91,13 @@ typedef struct UniformSymbolTableStruct {
 
 struct UniformSymbolTableModuleStruct {
   UniformSymbolTable* (*init)();
+
   UniformSymbolTableNode* (*search_global)(UniformSymbolTable* table, char *name);
   UniformSymbolTableNode* (*insert_global)(UniformSymbolTable* table, char *name);
+  UniformSymbolTableNode* (*insert_module)(UniformSymbolTable* table, UniformSymbolTableNode* node);
+
   void (*clear)(UniformSymbolTable* table);
+  void (*print_tree)(UniformSymbolTableNode *root, int level);
 };
 
 extern struct UniformSymbolTableModuleStruct UniformSymbolTableModule;
