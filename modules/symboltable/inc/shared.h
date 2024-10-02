@@ -49,7 +49,7 @@ typedef struct UniformDefinitionStruct {
       struct UniformSymbolTableNodeStruct* locals;
       struct UniformSymbolTableStruct*     local_symbol_table;
     } func;
-  } definition;
+  } description;
 
   struct { int offset; } data;
 } UniformDefinition;

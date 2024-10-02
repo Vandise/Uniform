@@ -140,10 +140,10 @@ describe("Scanner Test Suite", scanner_test_suite)
         expect(scanner->current_token.code) to equal(T_NEWLINE)
 
         UNIFORM_TOKEN_CODE keyword_tokens[] = {
-          T_FUNC, T_STRUCT, T_CASE, T_RETURN
+          T_FUNC, T_STRUCT, T_CASE, T_RETURN, T_LET, T_COLON_COLON
         };
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 6; i++) {
           UniformScannerModule.get_token(scanner);
           expect(scanner->current_token.code) to equal(keyword_tokens[i]) 
         }
