@@ -36,6 +36,12 @@ static UniformASTNode* token_to_node(UniformToken* token) {
       node->data = (void*)data;
       return node;         
     }
+    case T_CONST: {
+      UniformASTConstantNode* data = malloc(sizeof(UniformASTConstantNode));
+      node->type = UNIFORM_CONSTANT_NODE;
+      node->data = (void*)data;
+      return node;
+    }
     case T_END:
     case T_STRUCT:
     case T_FUNC:

@@ -39,6 +39,7 @@ static UniformASTNode* assignment_statement(UniformParser* parser) {
   UniformToken* t = UniformParserModule.get_token(parser);
   UniformASTNode* node = UniformASTNodeModule.token_to_node(t);
   UniformASTAssignmentNode* data = (UniformASTAssignmentNode*)(node->data);
+  data->module = NULL;
 
   UniformParserModule.next(parser); // :
   UniformParserModule.next(parser); // T_CONSTANT
@@ -64,6 +65,20 @@ static UniformASTNode* assignment_statement(UniformParser* parser) {
   UniformParserModule.next(parser);
 
   data->expressions = UniformParserExpression.process(parser, NULL);
+
+  /*
+
+  todo: add context of function or lambda
+
+  UniformSymbolTableNode* assignsymtab = UniformSymbolTableModule.insert_global(
+    symbol_table,
+    data->identifier
+  );
+
+  assignsymtab->type = data->expressions->type->type;
+  data->symbol = assignsymtab;
+
+  */
 
   if(UniformParserType.assign_compatible(n->type, data->expressions->type->type)) {
     return node;

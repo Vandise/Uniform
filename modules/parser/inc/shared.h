@@ -7,6 +7,7 @@
 #include "uniform/parser/types.h"
 #include "uniform/parser/expressions.h"
 #include "uniform/parser/statements.h"
+#include "uniform/parser/declarations.h"
 #include "uniform/parser/modules.h"
 #include "uniform/parser/parser.h"
 

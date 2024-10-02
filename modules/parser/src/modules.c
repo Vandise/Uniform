@@ -55,14 +55,28 @@ static UniformASTNode* module_definition(UniformParser* parser, UniformASTModule
   t = UniformParserModule.get_token(parser);
   strcpy(module->identifier, t->token_string);
 
-  printf("Module id: %s \n", module->identifier);
-
   // T_NEWLINE
   UniformParserModule.next(parser);
 
-  printf("Expected newline before body: %d / %d \n", T_NEWLINE, UniformParserModule.get_token(parser)->code);
-
   UniformParserModule.skip_newlines(parser);
+
+  //
+  // add symbol before processing body
+  //
+  UniformSymbolTableNode* symnode = malloc(sizeof(UniformSymbolTableNode));
+  symnode->name = malloc(strlen(module->identifier) + 1);
+  strcpy(symnode->name, module->identifier);
+
+  if (parent != NULL) {
+    UniformSymbolTableNode* parentsym = UniformSymbolTableModule.search_global(parser->symbol_table, parent->identifier);
+    symnode->definition.info.module.parent = parentsym;
+  }
+
+  module->symbol = UniformSymbolTableModule.insert_module(parser->symbol_table, symnode);
+
+  //
+  // Body
+  //
 
   body(parser, module);
 
@@ -87,13 +101,17 @@ static void body(UniformParser* parser, UniformASTModuleNode* module) {
       );
       break;
     }
+    case T_CONST: {
+      UniformASTModule.insert_node(
+        module->body,
+        UniformParserDeclaration.process(parser, module)
+      );
+    }
     default:
       break;
   }
 
   UniformParserModule.skip_newlines(parser);
-
-  printf("Expected end after body: %d / %d \n", T_END, UniformParserModule.get_token(parser)->code);
 
   UniformParserModule.next(parser);
 }

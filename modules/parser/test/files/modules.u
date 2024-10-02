@@ -1,6 +1,7 @@
 module Main
 
   module SubMain
+    const R = 10
   end
 
 end

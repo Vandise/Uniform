@@ -42,7 +42,7 @@ describe("Modules Parser Test Suite", modules_parser_test_suite)
   after(after_modules)
 
   context(".modules")
-    it("processes submodules")
+    it("processes modules")
       UniformASTNode* node = UniformModuleParser.process(modules_parser, NULL);
       UniformASTModuleNode* module = (UniformASTModuleNode*)(node->data);
 
@@ -52,6 +52,19 @@ describe("Modules Parser Test Suite", modules_parser_test_suite)
       UniformASTModuleNode* submodule = (UniformASTModuleNode*)(body->nodes[0]->data);
 
       expect(submodule->identifier) to equal("SubMain")
+    end
+
+    it("adds the symbols to the symbol table")
+      UniformASTNode* node = UniformModuleParser.process(modules_parser, NULL);
+      UniformSymbolTableNode* mainsym = UniformSymbolTableModule.search_global(modules_table, "Main");
+
+      expect(mainsym->name) to equal("Main")
+
+      UniformSymbolTableNode* subsym = UniformSymbolTableModule.search_global(mainsym->definition.info.module.symbol_table, "SubMain");
+      expect(subsym->name) to equal("SubMain")
+
+      UniformSymbolTableNode* declsym = UniformSymbolTableModule.search_global(subsym->definition.info.module.symbol_table, "R");
+      expect(declsym->name) to equal("R")
     end
   end
 end
