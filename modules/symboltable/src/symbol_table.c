@@ -59,6 +59,7 @@ static UniformSymbolTableNode* symboltable_insert_global(UniformSymbolTable* tab
   UniformSymbolTableNode*  node = malloc(sizeof(UniformSymbolTableNode));
   node->name = malloc(strlen(name) + 1);
   strcpy(node->name, name);
+  node->definition.type = UNIFORM_UNDEFINED_DEFINITION;
 
   // needs ** as inserting a node causes a pointer to be changed
   return insert_node(&(table->global_node), node);
