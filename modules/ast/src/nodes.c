@@ -30,7 +30,12 @@ static UniformASTNode* token_to_node(UniformToken* token) {
     case T_ERROR:
     case T_END_OF_FILE:
     case T_STRING:
-    case T_MODULE:
+    case T_MODULE: {
+      UniformASTModuleNode* data = malloc(sizeof(UniformASTModuleNode));
+      node->type = UNIFORM_MODULE_NODE;
+      node->data = (void*)data;
+      return node;         
+    }
     case T_END:
     case T_STRUCT:
     case T_FUNC:

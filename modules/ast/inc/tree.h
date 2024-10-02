@@ -10,7 +10,7 @@ typedef struct UniformASTStruct {
   UniformSymbolTableNode *type;
 
   UniformASTNode** nodes;
-} UniformAST, UniformASTExpressionNode;
+} UniformAST, UniformASTExpressionNode, UniformASTBodyNode, UniformASTBlockNode;
 
 struct UniformASTModuleStruct {
   struct UniformASTStruct* (*init_tree)(int);

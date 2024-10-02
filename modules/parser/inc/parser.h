@@ -21,6 +21,7 @@ struct UniformParserModuleStruct {
   void (*next)(UniformParser*);
   int (*token_in_list)(UNIFORM_TOKEN_CODE, UNIFORM_TOKEN_CODE[]);
 
+  void(*skip_newlines)(UniformParser*);
   void (*close)(UniformParser*);
 };
 

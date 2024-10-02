@@ -6,6 +6,7 @@
 
 static UniformParser* init(UniformSymbolTable* symbol_table, UniformTokenArray* tokens);
 static UniformToken* get_token(UniformParser* parser);
+static void skip_newlines(UniformParser* parser);
 static int token_in_list(UNIFORM_TOKEN_CODE code, UNIFORM_TOKEN_CODE token_list[]);
 static void close(UniformParser* parser);
 
@@ -53,6 +54,14 @@ static int token_in_list(UNIFORM_TOKEN_CODE code, UNIFORM_TOKEN_CODE token_list[
   return 0;
 }
 
+static void skip_newlines(UniformParser* parser) {
+  UniformToken* token = get_token(parser);
+  while(token->code == T_NEWLINE) {
+    next(parser);
+    token = get_token(parser);
+  }
+}
+
 static void close(UniformParser* parser) {
   //
   // tokens get cleared when the preprocessor is closed
@@ -70,5 +79,6 @@ struct UniformParserModuleStruct UniformParserModule = {
   .peek = peek,
   .next = next,
   .token_in_list = token_in_list,
-  .close = close
+  .close = close,
+  .skip_newlines = skip_newlines
 };
