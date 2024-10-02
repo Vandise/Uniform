@@ -62,9 +62,13 @@ static void clear_nodes(UniformSymbolTableNode* node) {
   clear_nodes(node->left);
 
   free(node->name);
-  if (node->type != NULL) {
+
+  // type pointers can only clear themselves
+  if (node->type != NULL && node->definition.type == UNIFORM_TYPE_DEFINITION) {
     free(node->type);
+    node->type = NULL;
   }
+
   free(node);
 }
 
