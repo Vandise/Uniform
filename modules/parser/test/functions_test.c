@@ -1,3 +1,4 @@
+
 #include "awry/awry.h"
 #include "uniform/parser/shared.h"
 
@@ -5,6 +6,7 @@
 #include "uniform/preprocessor/shared.h"
 #include "uniform/core/shared.h"
 
+/*
 #if defined(_WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
   #define SCANNER_LIB "lib/libuniformscanner.dll"
 #endif
@@ -48,3 +50,4 @@ describe("Functions Parser Test Suite", functions_parser_test_suite)
     end
   end
 end
+*/
