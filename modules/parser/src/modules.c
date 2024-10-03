@@ -66,6 +66,7 @@ static UniformASTNode* module_definition(UniformParser* parser, UniformASTModule
   UniformSymbolTableNode* symnode = malloc(sizeof(UniformSymbolTableNode));
   symnode->name = malloc(strlen(module->identifier) + 1);
   strcpy(symnode->name, module->identifier);
+  symnode->definition.info.module.parent = NULL;
 
   if (parent != NULL) {
     UniformSymbolTableNode* parentsym = UniformSymbolTableModule.search_global(parser->symbol_table, parent->identifier);
