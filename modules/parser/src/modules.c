@@ -107,6 +107,14 @@ static void body(UniformParser* parser, UniformASTModuleNode* module) {
         UniformParserDeclaration.process(parser, module)
       );
     }
+    case T_IDENTIFIER: {
+      //UniformASTModule.insert_node(
+      //  module->body,
+      //  UniformParserDeclaration.process(parser, module)
+      //);
+      UniformParserDeclaration.process(parser, module);
+      break;
+    }
     default:
       break;
   }

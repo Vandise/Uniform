@@ -3,5 +3,5 @@ module User
   42 0.42
   . = { } [ ] + - * / ^ : ; , ? ! ( ) | > < ~ % || >= <=
   |> ->
-  func struct case return let :: const
+  func struct case return let :: const def defp do
 end

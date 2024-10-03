@@ -1,0 +1,7 @@
+module Main
+
+  main :: () -> Integer do
+    let x:Integer = (10 * 3)
+  end
+
+end

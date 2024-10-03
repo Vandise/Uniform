@@ -29,6 +29,19 @@ typedef struct UniformASTModuleNodeStruct {
   UniformASTBodyNode* body;
 } UniformASTModuleNode;
 
+typedef struct UniformASTFunctionNodeStruct {
+  char identifier[128];
+  UniformSymbolTableNode* symbol;
+  UniformASTBodyNode* body;
+
+  UniformSymbolTableNode* return_type;
+
+  //
+  // todo: arguments
+  //
+
+} UniformASTFunctionNode;
+
 typedef struct UniformASTLiteralNodeStruct {
   UniformScannerLiteral literal;
 } UniformASTLiteralNode;

@@ -10,15 +10,12 @@
 
 static UniformASTNode* process(UniformParser* parser, UniformASTModuleNode* module);
 static UniformASTNode* constant_declaration(UniformParser* parser, UniformASTModuleNode* module);
-
+static UniformASTNode* function_declaration(UniformParser* parser, UniformASTModuleNode* module);
 
 // ============================
 //        Implementation
 // ============================
 
-/*
-
-*/
 static UniformASTNode* process(UniformParser* parser, UniformASTModuleNode* module) {
   UniformLogger.log_info("UniformParser::Declarations::process");
 
@@ -26,6 +23,8 @@ static UniformASTNode* process(UniformParser* parser, UniformASTModuleNode* modu
   switch(t->code) {
     case T_CONST:
       return constant_declaration(parser, module);
+    case T_IDENTIFIER:
+      return function_declaration(parser, module);
     default:
       break;
   }
@@ -68,6 +67,21 @@ static UniformASTNode* constant_declaration(UniformParser* parser, UniformASTMod
   data->symbol = constsymtab;
 
   return node;
+}
+
+/*
+  identifier bound to a lambda expression
+
+  T_IDENTIFIER :: (< params_list >) T_LAMBDA T_CONSTANT T_DO
+    < block >
+  T_END
+*/
+static UniformASTNode* function_declaration(UniformParser* parser, UniformASTModuleNode* module) {
+  UniformLogger.log_info("UniformParser::Declarations::function_declaration");
+
+  printf("Function declaration!\n");
+
+  return NULL;
 }
 
 // ============================

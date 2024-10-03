@@ -20,6 +20,10 @@ static UniformASTNode* process(UniformParser* parser) {
 
   UniformToken* t = UniformParserModule.get_token(parser);
   switch(t->code) {
+    case T_LET: {
+      UniformParserModule.next(parser);
+      return assignment_statement(parser);
+    }
     case T_IDENTIFIER:
       return assignment_statement(parser);
     default:
