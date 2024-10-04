@@ -6,7 +6,10 @@ FILE_UTIL_HEADERS      := $(wildcard $(FILE_UTIL_DIR)/inc/*.h)
 
 FILE_UTIL_OBJECTS      := $(patsubst $(FILE_UTIL_DIR)/src/%.c, $(FILE_UTIL_DIR)/obj/%.o, $(FILE_UTIL_FILES))
 
-fileutil: file_util_mkdir file_util_add_headers file_util_module file_util_library
+FILE_UTIL_TEST_FILES   := $(wildcard $(FILE_UTIL_DIR)/test/*.c)
+FILE_UTIL_TEST_OBJECTS := $(patsubst $(FILE_UTIL_DIR)/test/%.c, $(FILE_UTIL_DIR)/obj/%.o, $(FILE_UTIL_TEST_FILES))
+
+fileutil: file_util_mkdir file_util_add_headers file_util_module file_util_library file_util_tests
 
 file_util_mkdir:
 	@echo "\nFile Module\n"
@@ -25,3 +28,9 @@ $(FILE_UTIL_DIR)/obj/%.o: $(FILE_UTIL_DIR)/src/%.c
 
 file_util_library:
 	$(ARCHIVER) rcs $(FILE_UTIL_LIB_NAME) $(FILE_UTIL_OBJECTS)
+
+file_util_tests: $(FILE_UTIL_TEST_OBJECTS)
+	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -o bin/file_util_tests $(FILE_UTIL_OBJECTS) $(FILE_UTIL_TEST_OBJECTS) $(LOGGER_LIB_NAME) -lawry -lm
+
+$(FILE_UTIL_TEST_OBJECTS): $(FILE_UTIL_TEST_FILES)
+	$(CC) $(CFLAGS) $(ADDFLAGS) -I $(SYSINCDIR) -c $< -o $@

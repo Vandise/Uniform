@@ -35,9 +35,6 @@ static char* uniform_basename(char *path) {
 }
 
 static char* get_file_path(const char* s) {
-  //
-  // todo: expand ..'s
-  //
   char *path_buffer = malloc(FILE_PATH_MAX);
   memset(&path_buffer[0], 0, sizeof(path_buffer));
 
@@ -47,10 +44,26 @@ static char* get_file_path(const char* s) {
     strcat(path_buffer, "/");
   }
 
-  char *last_slash = strrchr(s, '/');
-  char *file_path = uniform_strndup(s, ((last_slash + 1) - s));
+  char *file_path = uniform_strndup(s, FILE_PATH_MAX);
+  char *tok[FILE_PATH_MAX / 2];
+  char *cur = strtok(file_path, "/");
+  int idx = 0;
 
-  strcat(path_buffer, file_path);
+  while (cur) {
+    if (strcmp(cur, "..") == 0 && idx > 0) idx--;
+    else if (strcmp(cur, "..") != 0 && strcmp(cur, ".") != 0) tok[idx++] = cur;
+    cur = strtok(NULL, "/");
+  }
+
+  for (int i = 0; i < idx; i++) {
+      strcat(path_buffer, "/");
+      strcat(path_buffer, tok[i]);
+  }
+
+  if (s[strlen(s) - 1] == '/') {
+    strcat(path_buffer, "/");
+  }
+
   free(file_path);
 
   return path_buffer;
