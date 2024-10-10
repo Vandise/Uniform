@@ -24,6 +24,7 @@ static UniformASTNode* token_to_node(UniformToken* token) {
   UniformASTNode* node = malloc(sizeof(UniformASTNode));
 
   //printf("token_to_node %s \n", UniformTokenModule.t_to_s(token->code));
+  int private_flag = 0;
 
   switch(token->code) {
     case UNDEFINED_TOKEN:
@@ -35,6 +36,19 @@ static UniformASTNode* token_to_node(UniformToken* token) {
       node->type = UNIFORM_MODULE_NODE;
       node->data = (void*)data;
       return node;         
+    }
+    case T_DEFP: { private_flag = 1; }
+    case T_DEF: {
+      UniformASTFunctionDeclarationNode* data = malloc(sizeof(UniformASTFunctionDeclarationNode));
+      data->parent = NULL;
+      data->symbol = NULL;
+      data->body = NULL;
+      data->module = NULL;
+      data->return_type = NULL;
+      data->private_flag = private_flag;
+      node->type = UNIFORM_FUNCTION_DECLARATION_NODE;
+      node->data = (void*)data;
+      return node;
     }
     case T_CONST: {
       UniformASTConstantNode* data = malloc(sizeof(UniformASTConstantNode));
@@ -95,6 +109,8 @@ static UniformASTNode* token_to_node(UniformToken* token) {
     case T_PIPE_OPERATOR:
       break;
     case T_LAMBDA:
+      break;
+    case T_DO:
       break;
     default:
       free(node);

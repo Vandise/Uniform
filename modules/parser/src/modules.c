@@ -67,6 +67,7 @@ static UniformASTNode* module_definition(UniformParser* parser, UniformASTModule
   symnode->name = malloc(strlen(module->identifier) + 1);
   strcpy(symnode->name, module->identifier);
   symnode->definition.info.module.parent = NULL;
+  symnode->definition.type = UNIFORM_MODULE_DEFINITION;
 
   if (parent != NULL) {
     UniformSymbolTableNode* parentsym = UniformSymbolTableModule.search_global(parser->symbol_table, parent->identifier);
@@ -75,11 +76,23 @@ static UniformASTNode* module_definition(UniformParser* parser, UniformASTModule
 
   module->symbol = UniformSymbolTableModule.insert_module(parser->symbol_table, symnode);
 
+  printf("module start (%s)\n", module->identifier);
+
   //
   // Body
   //
-
   body(parser, module);
+
+  t = UniformParserModule.get_token(parser);
+
+
+  // todo: assert token is T_END
+  printf("after body token is T_END %d (%s)\n", T_END, UniformTokenModule.t_to_s(t->code));
+
+  UniformParserModule.next(parser);
+
+  t = UniformParserModule.get_token(parser);
+  printf("next token is (%s)\n", UniformTokenModule.t_to_s(t->code));
 
   return node;
 }
@@ -94,27 +107,42 @@ static void body(UniformParser* parser, UniformASTModuleNode* module) {
 
   UniformToken* t = UniformParserModule.get_token(parser);
 
-  switch(t->code) {
-    case T_MODULE: {
-      UniformASTModule.insert_node(
-        module->body,
-        module_definition(parser, module)
-      );
-      break;
+  // todo: token module in list
+  while(t != NULL && (t->code == T_MODULE || t->code == T_CONST || t->code == T_DEF || t->code == T_DEFP)) {
+    switch(t->code) {
+      case T_MODULE: {
+        UniformASTModule.insert_node(
+          module->body,
+          module_definition(parser, module)
+        );
+        break;
+      }
+      case T_CONST: {
+        UniformASTModule.insert_node(
+          module->body,
+          UniformParserDeclaration.process(parser, module)
+        );
+        break;
+      }/*
+      case T_DEFP:
+      case T_DEF: {
+        UniformASTModule.insert_node(
+          module->body,
+          UniformParserDeclaration.process(parser, module)
+        );
+        break;
+      }
+      */
+      default:
+        break;
     }
-    case T_CONST: {
-      UniformASTModule.insert_node(
-        module->body,
-        UniformParserDeclaration.process(parser, module)
-      );
-    }
-    default:
-      break;
+
+    UniformParserModule.next(parser);
+    UniformParserModule.skip_newlines(parser);
+    t = UniformParserModule.get_token(parser);
   }
 
   UniformParserModule.skip_newlines(parser);
-
-  UniformParserModule.next(parser);
 }
 
 // ============================

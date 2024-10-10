@@ -13,7 +13,8 @@ typedef enum {
   UNIFORM_EXPRESSION_NODE,
   UNIFORM_ASSIGNMENT_NODE,
   UNIFORM_MODULE_NODE,
-  UNIFORM_CONSTANT_NODE
+  UNIFORM_CONSTANT_NODE,
+  UNIFORM_FUNCTION_DECLARATION_NODE
 } UNIFORM_NODE_TYPE;
 
 typedef struct UniformASTNodeStruct {
@@ -28,6 +29,18 @@ typedef struct UniformASTModuleNodeStruct {
   UniformSymbolTableNode* symbol;
   UniformASTBodyNode* body;
 } UniformASTModuleNode;
+
+typedef struct UniformASTFunctionDeclarationNodeStruct {
+  struct UniformASTFunctionDeclarationNodeStruct* parent;
+  
+  int private_flag;
+  UniformSymbolTableNode* return_type;
+
+  char identifier[128];
+  UniformSymbolTableNode* symbol;
+  UniformASTBodyNode* body;
+  UniformASTModuleNode* module;
+} UniformASTFunctionDeclarationNode, UniformASTLambdaDeclarationNode;
 
 typedef struct UniformASTLiteralNodeStruct {
   UniformScannerLiteral literal;

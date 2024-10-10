@@ -1,7 +1,7 @@
 module Main
-
   def main() -> Integer do
 
-  end
 
+
+  end
 end

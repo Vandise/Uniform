@@ -10,7 +10,7 @@
 
 static UniformASTNode* process(UniformParser* parser, UniformASTModuleNode* module);
 static UniformASTNode* constant_declaration(UniformParser* parser, UniformASTModuleNode* module);
-
+static UniformASTNode* function_declaration(UniformParser* parser, UniformASTModuleNode* module, int private_flag);
 
 // ============================
 //        Implementation
@@ -23,9 +23,17 @@ static UniformASTNode* process(UniformParser* parser, UniformASTModuleNode* modu
   UniformLogger.log_info("UniformParser::Declarations::process");
 
   UniformToken* t = UniformParserModule.get_token(parser);
+  int private_flag = 0;
+
   switch(t->code) {
     case T_CONST:
       return constant_declaration(parser, module);
+    case T_DEFP: {
+      private_flag = 1;
+    }
+    case T_DEF: {
+      return function_declaration(parser, module, private_flag);
+    }
     default:
       break;
   }
@@ -65,7 +73,71 @@ static UniformASTNode* constant_declaration(UniformParser* parser, UniformASTMod
   );
 
   constsymtab->type = data->type->type;
+  constsymtab->definition.type = UNIFORM_CONSTANT_DEFINITION;
   data->symbol = constsymtab;
+
+  return node;
+}
+
+/*
+  def | defp T_IDENTIFIER (< args >) T_LAMBDA T_CONSTANT T_DO T_NEWLINE
+    < statements >
+  T_END
+*/
+static UniformASTNode* function_declaration(UniformParser* parser, UniformASTModuleNode* module, int private) {
+  UniformLogger.log_info("UniformParser::Declarations::function_declaration");
+
+  UniformToken* t = UniformParserModule.get_token(parser);
+
+  UniformASTNode* node = UniformASTNodeModule.token_to_node(t);
+  UniformASTFunctionDeclarationNode* data = (UniformASTFunctionDeclarationNode*)(node->data);
+  data->module = module;
+
+  // T_IDENTIFIER
+  UniformParserModule.next(parser);
+  t = UniformParserModule.get_token(parser);
+  strcpy(data->identifier, t->token_string);
+
+  printf("id: %s \n", data->identifier);
+
+  // (
+  UniformParserModule.next(parser);
+  // todo:
+  //  args + no parens
+  // )
+  UniformParserModule.next(parser);
+
+  // T_LAMBDA
+  UniformParserModule.next(parser);
+
+  // T_CONSTANT
+  UniformParserModule.next(parser);
+  t = UniformParserModule.get_token(parser);
+  UniformSymbolTableNode* n = UniformSymbolTableModule.search_global(parser->symbol_table, t->token_string);
+
+  data->return_type = n->type->type_idp;
+
+  //
+  // enter ref for recursion
+  //
+  UniformSymbolTableNode* fnctsymtab = UniformSymbolTableModule.insert_global(
+    module->symbol->definition.info.module.symbol_table,
+    data->identifier
+  );
+
+  // T_DO
+  UniformParserModule.next(parser);
+  // T_NEWLINE
+  UniformParserModule.next(parser);
+
+  UniformParserModule.skip_newlines(parser);
+
+  /*
+    todo: do-while statement processor is not null
+  */
+
+  // T_END
+  UniformParserModule.next(parser);
 
   return node;
 }
