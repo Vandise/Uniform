@@ -98,8 +98,6 @@ static UniformASTNode* function_declaration(UniformParser* parser, UniformASTMod
   t = UniformParserModule.get_token(parser);
   strcpy(data->identifier, t->token_string);
 
-  printf("id: %s \n", data->identifier);
-
   // (
   UniformParserModule.next(parser);
   // todo:
@@ -115,7 +113,7 @@ static UniformASTNode* function_declaration(UniformParser* parser, UniformASTMod
   t = UniformParserModule.get_token(parser);
   UniformSymbolTableNode* n = UniformSymbolTableModule.search_global(parser->symbol_table, t->token_string);
 
-  data->return_type = n->type->type_idp;
+  data->return_type = n->type;
 
   //
   // enter ref for recursion
@@ -124,6 +122,9 @@ static UniformASTNode* function_declaration(UniformParser* parser, UniformASTMod
     module->symbol->definition.info.module.symbol_table,
     data->identifier
   );
+
+  fnctsymtab->definition.type = UNIFORM_FUNCTION_DEFINITION;
+  fnctsymtab->definition.info.func.return_type = n->type;
 
   // T_DO
   UniformParserModule.next(parser);
@@ -137,6 +138,9 @@ static UniformASTNode* function_declaration(UniformParser* parser, UniformASTMod
   */
 
   // T_END
+
+  t = UniformParserModule.get_token(parser);
+
   UniformParserModule.next(parser);
 
   return node;

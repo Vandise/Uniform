@@ -34,7 +34,7 @@ typedef struct UniformASTFunctionDeclarationNodeStruct {
   struct UniformASTFunctionDeclarationNodeStruct* parent;
   
   int private_flag;
-  UniformSymbolTableNode* return_type;
+  UniformSymbolTableType* return_type;
 
   char identifier[128];
   UniformSymbolTableNode* symbol;
@@ -53,7 +53,7 @@ typedef struct UniformASTOperatorNodeStruct {
 typedef struct UniformASTAssignmentNodeStruct {
   char identifier[128];
 
-  UniformSymbolTableNode* type;
+  UniformSymbolTableNode* type;     // todo: switch to UniformSymbolTableType
   UniformSymbolTableNode* symbol;
 
   UniformASTModuleNode* module;

@@ -1,7 +1,13 @@
 module Main
+
   def main() -> Integer do
 
 
+  end
+
+  defp sub_main() -> Integer do
+
 
   end
+
 end

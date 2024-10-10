@@ -9,6 +9,7 @@
 
 struct UniformSymbolTableNodeStruct;
 struct UniformSymbolTableStruct;
+struct UniformSymbolTableTypeStruct;
 
 typedef union {
   int i32;
@@ -52,6 +53,7 @@ typedef struct UniformDefinitionStruct {
       int param_size;
       int locals_size;
 
+      struct UniformSymbolTableTypeStruct* return_type;
       struct UniformSymbolTableNodeStruct* params;
       struct UniformSymbolTableNodeStruct* locals;
       struct UniformSymbolTableStruct*     local_symbol_table;
@@ -65,7 +67,6 @@ typedef struct UniformSymbolTableTypeStruct {
   UNIFORM_TYPE_FORM form;
   int size;
   struct UniformSymbolTableNodeStruct* type_idp;
-
 } UniformSymbolTableType;
 
 typedef struct UniformSymbolTableNodeStruct {
