@@ -6,7 +6,7 @@
 typedef struct UniformParserStruct UniformParser;
 
 struct UniformParserStatementStruct {
-  UniformASTNode* (*process)(UniformParser*);
+  UniformASTNode* (*process)(UniformParser*, UniformSymbolTableNode*);
 };
 
 extern struct UniformParserStatementStruct UniformParserStatement;

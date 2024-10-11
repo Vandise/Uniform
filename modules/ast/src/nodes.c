@@ -35,7 +35,7 @@ static UniformASTNode* token_to_node(UniformToken* token) {
       UniformASTModuleNode* data = malloc(sizeof(UniformASTModuleNode));
       node->type = UNIFORM_MODULE_NODE;
       node->data = (void*)data;
-      return node;         
+      return node;
     }
     case T_DEFP: { private_flag = 1; }
     case T_DEF: {
@@ -64,6 +64,7 @@ static UniformASTNode* token_to_node(UniformToken* token) {
     case T_IDENTIFIER: {
       UniformASTAssignmentNode* data = malloc(sizeof(UniformASTAssignmentNode));
       strcpy(data->identifier, token->token_string);
+      data->module = NULL;
       node->type = UNIFORM_ASSIGNMENT_NODE;
       node->data = (void*)data;
       return node;      

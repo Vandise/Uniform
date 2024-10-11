@@ -13,17 +13,17 @@ static UNIFORM_TOKEN_CODE mult_op_list[] = { T_STAR, T_SLASH, 0 };
 //          Forwards
 // ============================
 
-static UniformASTExpressionNode* process(UniformParser* parser, UniformASTExpressionNode* tree);
-static void expression(UniformParser* parser, UniformASTExpressionNode* tree);
-static void term(UniformParser* parser, UniformASTExpressionNode* tree);
-static void factor(UniformParser* parser, UniformASTExpressionNode* tree);
+static UniformASTExpressionNode* process(UniformParser* parser, UniformASTExpressionNode* tree, UniformSymbolTableNode* context);
+static void expression(UniformParser* parser, UniformASTExpressionNode* tree, UniformSymbolTableNode* context);
+static void term(UniformParser* parser, UniformASTExpressionNode* tree, UniformSymbolTableNode* context);
+static void factor(UniformParser* parser, UniformASTExpressionNode* tree, UniformSymbolTableNode* context);
 
 // ============================
 //        Implementation
 // ============================
 
 // returns a tree in post-fix notation
-static UniformASTExpressionNode* process(UniformParser* parser, UniformASTExpressionNode* tree) {
+static UniformASTExpressionNode* process(UniformParser* parser, UniformASTExpressionNode* tree, UniformSymbolTableNode* context) {
   UniformLogger.log_info("UniformParser::Expressions::process");
 
   if (tree == NULL) {
@@ -31,7 +31,7 @@ static UniformASTExpressionNode* process(UniformParser* parser, UniformASTExpres
   }
 
   UniformToken* operator;
-  expression(parser, tree);
+  expression(parser, tree, context);
 
   UniformToken* t = UniformParserModule.get_token(parser);
 
@@ -42,7 +42,7 @@ static UniformASTExpressionNode* process(UniformParser* parser, UniformASTExpres
   ) {
     operator = UniformParserModule.get_token(parser);
     UniformParserModule.next(parser);
-    expression(parser, tree);
+    expression(parser, tree, context);
 
     UniformASTModule.insert_node(
       tree,
@@ -53,7 +53,7 @@ static UniformASTExpressionNode* process(UniformParser* parser, UniformASTExpres
   return tree;
 }
 
-static void expression(UniformParser* parser, UniformASTExpressionNode* tree) {
+static void expression(UniformParser* parser, UniformASTExpressionNode* tree, UniformSymbolTableNode* context) {
   UniformLogger.log_info("UniformParser::Expressions::expression");
 
   UniformToken* operator = NULL;
@@ -66,7 +66,7 @@ static void expression(UniformParser* parser, UniformASTExpressionNode* tree) {
     UniformParserModule.next(parser);
   }
 
-  term(parser, tree);
+  term(parser, tree, context);
 
   if (operator != NULL && operator->code == T_MINUS) {
     t->code = T_NEGATE;
@@ -83,7 +83,7 @@ static void expression(UniformParser* parser, UniformASTExpressionNode* tree) {
 
     UniformParserModule.next(parser);
     t = UniformParserModule.get_token(parser);
-    term(parser, tree);
+    term(parser, tree, context);
 
     UniformASTModule.insert_node(
       tree,
@@ -92,12 +92,12 @@ static void expression(UniformParser* parser, UniformASTExpressionNode* tree) {
   }
 }
 
-static void term(UniformParser* parser, UniformASTExpressionNode* tree) {
+static void term(UniformParser* parser, UniformASTExpressionNode* tree, UniformSymbolTableNode* context) {
   UniformLogger.log_info("UniformParser::Expressions::term");
 
   UniformToken* operator;
 
-  factor(parser, tree);
+  factor(parser, tree, context);
 
   UniformToken* t = UniformParserModule.get_token(parser);
 
@@ -106,7 +106,7 @@ static void term(UniformParser* parser, UniformASTExpressionNode* tree) {
     UniformParserModule.next(parser);
     t = UniformParserModule.get_token(parser);
 
-    factor(parser, tree);
+    factor(parser, tree, context);
     
     UniformASTModule.insert_node(
       tree,
@@ -115,7 +115,7 @@ static void term(UniformParser* parser, UniformASTExpressionNode* tree) {
   }
 }
 
-static void factor(UniformParser* parser, UniformASTExpressionNode* tree) {
+static void factor(UniformParser* parser, UniformASTExpressionNode* tree, UniformSymbolTableNode* context) {
   UniformLogger.log_info("UniformParser::Expressions::factor");
 
   UniformToken* t = UniformParserModule.get_token(parser);
@@ -131,7 +131,7 @@ static void factor(UniformParser* parser, UniformASTExpressionNode* tree) {
         UNIFORM_LITERAL ltype = t->literal.type;
         UniformSymbolTableNode* type = NULL;
         if (ltype == I_32LIT || ltype == I_64LIT) {
-          tree->type = UniformSymbolTableModule.search_global(parser->symbol_table, UNIFORM_INTEGER_TYPE);
+          tree->type = UniformSymbolTableModule.search_global(parser->symbol_table, UNIFORM_INTEGER_TYPE)->type;
         }
       }
 
@@ -151,7 +151,7 @@ static void factor(UniformParser* parser, UniformASTExpressionNode* tree) {
 
     case T_OPEN_PAREN:
       UniformParserModule.next(parser);
-      process(parser, tree);
+      process(parser, tree, context);
       // todo: assert is T_CLOSE_PAREN
       UniformParserModule.next(parser);
       break;

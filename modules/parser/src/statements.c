@@ -8,20 +8,20 @@
 //          Forwards
 // ============================
 
-static UniformASTNode* process(UniformParser* parser);
-static UniformASTNode* assignment_statement(UniformParser* parser);
+static UniformASTNode* process(UniformParser* parser, UniformSymbolTableNode* context);
+static UniformASTNode* assignment_statement(UniformParser* parser, UniformSymbolTableNode* context);
 
 // ============================
 //        Implementation
 // ============================
 
-static UniformASTNode* process(UniformParser* parser) {
+static UniformASTNode* process(UniformParser* parser, UniformSymbolTableNode* context) {
   UniformLogger.log_info("UniformParser::Statements::process");
 
   UniformToken* t = UniformParserModule.get_token(parser);
   switch(t->code) {
     case T_IDENTIFIER:
-      return assignment_statement(parser);
+      return assignment_statement(parser, context);
     default:
       break;
   }
@@ -34,12 +34,15 @@ static UniformASTNode* process(UniformParser* parser) {
   todo: symbol table types and validation.
         handle syntax errors
 */
-static UniformASTNode* assignment_statement(UniformParser* parser) {
+static UniformASTNode* assignment_statement(UniformParser* parser, UniformSymbolTableNode* context) {
   UniformLogger.log_info("UniformParser::Statements::assignment_statement");
+
   UniformToken* t = UniformParserModule.get_token(parser);
   UniformASTNode* node = UniformASTNodeModule.token_to_node(t);
   UniformASTAssignmentNode* data = (UniformASTAssignmentNode*)(node->data);
-  data->module = NULL;
+
+  // todo:
+  //  is the local present in the current context?
 
   UniformParserModule.next(parser); // :
   UniformParserModule.next(parser); // T_CONSTANT
@@ -64,23 +67,18 @@ static UniformASTNode* assignment_statement(UniformParser* parser) {
   UniformParserModule.next(parser); // T_EQUAL
   UniformParserModule.next(parser);
 
-  data->expressions = UniformParserExpression.process(parser, NULL);
+  data->expressions = UniformParserExpression.process(parser, NULL, context);
 
-  /*
+  if(UniformParserType.assign_compatible(n->type, data->expressions->type)) {
+    // assignment will always be in a function or lambda expression
+    UniformSymbolTableNode* assignsymtab = UniformSymbolTableModule.insert_global(
+      context->definition.info.func.local_symbol_table,
+      data->identifier
+    );
 
-  todo: add context of function or lambda
+    assignsymtab->type = data->expressions->type;
+    data->symbol = assignsymtab;
 
-  UniformSymbolTableNode* assignsymtab = UniformSymbolTableModule.insert_global(
-    symbol_table,
-    data->identifier
-  );
-
-  assignsymtab->type = data->expressions->type->type;
-  data->symbol = assignsymtab;
-
-  */
-
-  if(UniformParserType.assign_compatible(n->type, data->expressions->type->type)) {
     return node;
   }
 
@@ -90,7 +88,7 @@ static UniformASTNode* assignment_statement(UniformParser* parser) {
     t->line_number,
     t->buffer_offset,
     t->token_string,
-    data->expressions->type->name
+    data->expressions->type->type_idp->name
   );
 
   free(node);

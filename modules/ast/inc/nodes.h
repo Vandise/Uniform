@@ -53,10 +53,11 @@ typedef struct UniformASTOperatorNodeStruct {
 typedef struct UniformASTAssignmentNodeStruct {
   char identifier[128];
 
-  UniformSymbolTableNode* type;     // todo: switch to UniformSymbolTableType
+  UniformSymbolTableType* data_type;
   UniformSymbolTableNode* symbol;
 
   UniformASTModuleNode* module;
+
   UniformASTExpressionNode* expressions;
 } UniformASTAssignmentNode, UniformASTConstantNode;
 

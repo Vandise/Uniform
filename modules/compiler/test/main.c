@@ -51,7 +51,7 @@ describe("Compiler Test Suite", compiler_test_suite)
         UniformPreprocessorModule.process(expressions_preprocessor, "modules/compiler/test/files/expression.u", NULL);
       UniformParser* expressions_parser = UniformParserModule.init(table, expressions_preprocessor->token_array);
 
-      UniformASTExpressionNode* tree = UniformParserExpression.process(expressions_parser, NULL);
+      UniformASTExpressionNode* tree = UniformParserExpression.process(expressions_parser, NULL, NULL);
       expect(tree->used) to equal(16)
 
       int status = UniformCompilerModule.compile(compiler, tree);

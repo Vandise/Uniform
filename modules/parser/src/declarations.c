@@ -64,15 +64,15 @@ static UniformASTNode* constant_declaration(UniformParser* parser, UniformASTMod
   // < expressions >
   UniformParserModule.next(parser);
 
-  data->expressions = UniformParserExpression.process(parser, NULL);
-  data->type = data->expressions->type;
+  data->expressions = UniformParserExpression.process(parser, NULL, module->symbol);
+  data->data_type = data->expressions->type;
 
   UniformSymbolTableNode* constsymtab = UniformSymbolTableModule.insert_global(
     module->symbol->definition.info.module.symbol_table,
     data->identifier
   );
 
-  constsymtab->type = data->type->type;
+  constsymtab->type = data->data_type;
   constsymtab->definition.type = UNIFORM_CONSTANT_DEFINITION;
   data->symbol = constsymtab;
 
@@ -125,6 +125,9 @@ static UniformASTNode* function_declaration(UniformParser* parser, UniformASTMod
 
   fnctsymtab->definition.type = UNIFORM_FUNCTION_DEFINITION;
   fnctsymtab->definition.info.func.return_type = n->type;
+  fnctsymtab->definition.info.func.local_symbol_table = UniformSymbolTableModule.init();
+
+  data->symbol = fnctsymtab;
 
   // T_DO
   UniformParserModule.next(parser);

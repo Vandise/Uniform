@@ -53,7 +53,7 @@ describe("Expressions Test Suite", expressions_test_suite)
         UNIFORM_LITERAL_NODE,UNIFORM_OPERATOR_NODE,UNIFORM_OPERATOR_NODE
       };
 
-      UniformASTExpressionNode* tree = UniformParserExpression.process(expressions_parser, NULL);
+      UniformASTExpressionNode* tree = UniformParserExpression.process(expressions_parser, NULL, NULL);
       expect(tree->used) to equal(16)
 
       for (int i = 0; i < tree->used; i++) {

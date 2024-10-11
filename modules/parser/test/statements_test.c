@@ -22,7 +22,6 @@ UniformSymbolTable* statements_table = NULL;
 UniformPreprocessor* statements_preprocessor  = NULL;
 UniformParser* statements_parser = NULL;
 
-
 define_fixture(before, before_statements) {
   statements_table = UniformSymbolTableModule.init();
   UniformCoreIntegerModule.init(statements_table);
@@ -45,8 +44,18 @@ describe("Statements Test Suite", statements_test_suite)
 
   context(".statements")
     it("parses assignment statements")
-      UniformASTNode* node = UniformParserStatement.process(statements_parser);
+      statements_parser->symbol_table->global_node->definition.type = UNIFORM_FUNCTION_DEFINITION;
+      statements_parser->symbol_table->global_node->definition.info.func.local_symbol_table = UniformSymbolTableModule.init();
+      
+      UniformASTNode* node = UniformParserStatement.process(statements_parser, statements_parser->symbol_table->global_node);
       expect(node->type) to equal(UNIFORM_ASSIGNMENT_NODE)
+
+      UniformSymbolTableNode* n = UniformSymbolTableModule.search_global(
+        statements_parser->symbol_table->global_node->definition.info.func.local_symbol_table,
+        "driving_age"
+      );
+
+      expect(n->name) to equal("driving_age")
     end
   end
 end

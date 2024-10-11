@@ -103,6 +103,11 @@ static void clear_nodes(UniformSymbolTableNode* node) {
     clear(node->definition.info.module.symbol_table);
   }
 
+  // functions
+  if (node->definition.type == UNIFORM_FUNCTION_DEFINITION) {
+    clear(node->definition.info.func.local_symbol_table);
+  }
+
   free(node);
 }
 

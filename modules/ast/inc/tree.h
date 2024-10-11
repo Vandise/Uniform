@@ -7,7 +7,7 @@ typedef struct UniformASTStruct {
   int size;
   int used;
 
-  UniformSymbolTableNode *type;
+  UniformSymbolTableType *type;
 
   UniformASTNode** nodes;
 } UniformAST, UniformASTExpressionNode, UniformASTBodyNode, UniformASTBlockNode;
