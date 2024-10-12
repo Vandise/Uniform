@@ -1,6 +1,9 @@
 module Main
 
   def main() -> Integer do
+    x:Integer = 10
+
+    y:Integer = 5
 
 
   end

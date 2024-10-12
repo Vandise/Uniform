@@ -126,6 +126,12 @@ static UniformASTNode* function_declaration(UniformParser* parser, UniformASTMod
   fnctsymtab->definition.type = UNIFORM_FUNCTION_DEFINITION;
   fnctsymtab->definition.info.func.return_type = n->type;
   fnctsymtab->definition.info.func.local_symbol_table = UniformSymbolTableModule.init();
+  fnctsymtab->definition.info.func.param_count = 0;
+  fnctsymtab->definition.info.func.param_size = 0;
+
+  // add space on the stack for the return type if any
+  fnctsymtab->definition.info.func.locals_size = data->return_type->size;
+  fnctsymtab->definition.info.func.locals_count = 0;
 
   data->symbol = fnctsymtab;
 
@@ -140,11 +146,22 @@ static UniformASTNode* function_declaration(UniformParser* parser, UniformASTMod
     todo: do-while statement processor is not null
   */
 
-  // T_END
+  data->body = UniformASTModule.init_tree(10);
+  UniformASTNode* bodynode = NULL;
 
-  t = UniformParserModule.get_token(parser);
+  do {
+    bodynode = UniformParserStatement.process(parser, fnctsymtab);
+    UniformASTModule.insert_node(data->body, bodynode);
 
-  UniformParserModule.next(parser);
+    t = UniformParserModule.get_token(parser);
+
+    //
+    // todo: assert newline
+    //
+
+    UniformParserModule.next(parser);
+    UniformParserModule.skip_newlines(parser);
+  } while(bodynode != NULL);
 
   return node;
 }

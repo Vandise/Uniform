@@ -79,6 +79,11 @@ static UniformASTNode* assignment_statement(UniformParser* parser, UniformSymbol
     assignsymtab->type = data->expressions->type;
     data->symbol = assignsymtab;
 
+    context->definition.info.func.locals_count++;
+    context->definition.info.func.locals_size += assignsymtab->type->size;
+
+    assignsymtab->definition.info.data.offset = (0 - context->definition.info.func.locals_size);
+
     return node;
   }
 

@@ -51,6 +51,7 @@ typedef struct UniformDefinitionStruct {
     struct {
       int param_count;
       int param_size;
+      int locals_count;
       int locals_size;
 
       struct UniformSymbolTableTypeStruct* return_type;

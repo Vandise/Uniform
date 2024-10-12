@@ -53,6 +53,16 @@ describe("Functions Parser Test Suite", functions_parser_test_suite)
       expect(mainfnctsym->name) to equal("main")
       expect(mainfnctsym->definition.type) to equal(UNIFORM_FUNCTION_DEFINITION)
       expect(mainfnctsym->definition.info.func.return_type->type_idp->name) to equal("Integer")
+      expect(mainfnctsym->definition.info.func.locals_count) to equal(2)
+      expect(mainfnctsym->definition.info.func.locals_size) to equal(12)
+
+      // local vars
+      UniformSymbolTableNode* xvarsym = UniformSymbolTableModule.search_global(mainfnctsym->definition.info.func.local_symbol_table, "x");
+      UniformSymbolTableNode* yvarsym = UniformSymbolTableModule.search_global(mainfnctsym->definition.info.func.local_symbol_table, "y");
+      expect(xvarsym->name) to equal("x")
+      expect(xvarsym->definition.info.data.offset) to equal(-8)
+      expect(yvarsym->name) to equal("y")
+      expect(yvarsym->definition.info.data.offset) to equal(-12)
 
       UniformSymbolTableNode* submainfnctsym = UniformSymbolTableModule.search_global(mainsym->definition.info.module.symbol_table, "sub_main");
       expect(submainfnctsym->name) to equal("sub_main")

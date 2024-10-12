@@ -46,7 +46,11 @@ describe("Statements Test Suite", statements_test_suite)
     it("parses assignment statements")
       statements_parser->symbol_table->global_node->definition.type = UNIFORM_FUNCTION_DEFINITION;
       statements_parser->symbol_table->global_node->definition.info.func.local_symbol_table = UniformSymbolTableModule.init();
-      
+      statements_parser->symbol_table->global_node->definition.info.func.param_count = 0;
+      statements_parser->symbol_table->global_node->definition.info.func.param_size = 0;
+      statements_parser->symbol_table->global_node->definition.info.func.locals_size = 0;
+      statements_parser->symbol_table->global_node->definition.info.func.locals_count = 0;
+
       UniformASTNode* node = UniformParserStatement.process(statements_parser, statements_parser->symbol_table->global_node);
       expect(node->type) to equal(UNIFORM_ASSIGNMENT_NODE)
 

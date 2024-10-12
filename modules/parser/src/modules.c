@@ -131,7 +131,11 @@ static void body(UniformParser* parser, UniformASTModuleNode* module) {
         break;
     }
 
-    UniformParserModule.next(parser);
+    //
+    // todo: assert T_END
+    //
+    t = UniformParserModule.get_token(parser);
+
     UniformParserModule.skip_newlines(parser);
     t = UniformParserModule.get_token(parser);
   }
