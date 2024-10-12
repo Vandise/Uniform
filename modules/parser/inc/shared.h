@@ -9,6 +9,7 @@
 #include "uniform/parser/statements.h"
 #include "uniform/parser/declarations.h"
 #include "uniform/parser/modules.h"
+#include "uniform/parser/program.h"
 #include "uniform/parser/parser.h"
 
 #endif

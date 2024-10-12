@@ -147,7 +147,7 @@ static UniformASTNode* function_declaration(UniformParser* parser, UniformASTMod
   UniformParserModule.skip_newlines(parser);
 
   /*
-    todo: do-while statement processor is not null
+    todo: refactor
   */
 
   data->body = UniformASTModule.init_tree(10);
@@ -155,7 +155,10 @@ static UniformASTNode* function_declaration(UniformParser* parser, UniformASTMod
 
   do {
     bodynode = UniformParserStatement.process(parser, fnctsymtab);
-    UniformASTModule.insert_node(data->body, bodynode);
+
+    if (bodynode != NULL) {
+      UniformASTModule.insert_node(data->body, bodynode);
+    }
 
     t = UniformParserModule.get_token(parser);
 

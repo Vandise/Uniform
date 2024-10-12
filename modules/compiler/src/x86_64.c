@@ -4,6 +4,7 @@
 //          Forwards
 // ============================
 
+static void clear_flags(UniformCompiler* compiler);
 static void set_iopt_flag(UniformCompiler*, UNIFORM_IOPT_X86_64_FLAG);
 static void clear_iopt_flag(UniformCompiler*, UNIFORM_IOPT_X86_64_FLAG);
 static int iopt_flag_set(UniformCompiler*, UNIFORM_IOPT_X86_64_FLAG);
@@ -13,11 +14,36 @@ static int compile_unknown_node(UniformCompiler*, UniformAST*, UniformASTNode*);
 static int compile_literal_node(UniformCompiler*, UniformAST*, UniformASTNode*);
 static int compile_operator_node(UniformCompiler*, UniformAST*, UniformASTNode*);
 static int compile_expression_node(UniformCompiler*, UniformAST*, UniformASTNode*);
+static int compile_function_node(UniformCompiler*, UniformAST*, UniformASTNode*);
+static int compile_assignment_node(UniformCompiler*, UniformAST*, UniformASTNode*);
+static int compile_module_node(UniformCompiler*, UniformAST*, UniformASTNode*);
+static int compile_constant_node(UniformCompiler*, UniformAST*, UniformASTNode*);
 static UniformASTNode* peek_node(UniformAST*, int, int);
+
+// ============================
+//          Locals
+// ============================
+
+// actions matching UNIFORM_NODE_TYPE
+
+static int (*compile_actions[])(UniformCompiler*, UniformAST*, UniformASTNode*) = {
+  compile_unknown_node,
+  compile_literal_node,
+  compile_operator_node,
+  compile_expression_node,
+  compile_assignment_node,
+  compile_module_node,
+  compile_constant_node,
+  compile_function_node
+};
 
 // ============================
 //        Implementation
 // ============================
+
+static void clear_flags(UniformCompiler* compiler) {
+  compiler->iopt_flags = 0;
+}
 
 static int iopt_flag_set(UniformCompiler* compiler, UNIFORM_IOPT_X86_64_FLAG flag) {
   return ((compiler->iopt_flags ) & (1<<(flag)));
@@ -226,22 +252,71 @@ static int compile_operator_node(UniformCompiler* compiler, UniformAST* src_tree
 }
 
 static int compile_expression_node(UniformCompiler* compiler, UniformAST* src_tree, UniformASTNode* node) {
-  UniformAST* data = (UniformAST*)node->data;
+  //UniformAST* data = (UniformAST*)node->data;
+  printf("\n Compiling expression \n");
   return 0;
 }
 
-// actions matching UNIFORM_NODE_TYPE
-static int (*compile_actions[])(UniformCompiler*, UniformAST*, UniformASTNode*) = {
-  compile_unknown_node,
-  compile_literal_node,
-  compile_operator_node,
-  compile_expression_node
-};
+static int compile_assignment_node(UniformCompiler* compiler, UniformAST* src_tree, UniformASTNode* node) {
+  clear_flags(compiler);
+
+  UniformASTAssignmentNode* data = (UniformASTAssignmentNode*)node->data;
+
+  int result = 0;
+  for (int i = 0; i < data->expressions->used; i++) {
+    result += compile_actions[
+      data->expressions->nodes[i]->type
+    ](compiler, data->expressions, data->expressions->nodes[i]);
+  }
+
+  // todo: assert RAX is set
+
+  printf("\t mov [rsp%d], rax\n", data->symbol->definition.info.data.offset);
+
+  clear_flags(compiler);
+
+  return result;
+}
+
+static int compile_module_node(UniformCompiler* compiler, UniformAST* src_tree, UniformASTNode* node) {
+  UniformASTModuleNode* data = (UniformASTModuleNode*)node->data;
+
+  int result = 0;
+  for (int i = 0; i < data->body->used; i++) {
+    result += compile_actions[
+      data->body->nodes[i]->type
+    ](compiler, data->body, data->body->nodes[i]);
+  }
+
+  return result;
+}
+
+static int compile_constant_node(UniformCompiler* compiler, UniformAST* src_tree, UniformASTNode* node) {
+  printf("\n Compiling constant \n");
+  return 0;
+}
+
+static int compile_function_node(UniformCompiler* compiler, UniformAST* src_tree, UniformASTNode* node) {
+  UniformASTFunctionDeclarationNode* data = (UniformASTFunctionDeclarationNode*)(node->data);
+  printf(".%s:\n", data->symbol->label);
+  printf("\t push rbp\n\t mov rbp, rsp\n\t sub rsp, %i\n", data->symbol->definition.info.func.locals_size);
+
+  int result = 0;
+  for (int i = 0; i < data->body->used; i++) {
+    result += compile_actions[
+      data->body->nodes[i]->type
+    ](compiler, data->body, data->body->nodes[i]);
+  }
+
+  printf("\t mov rsp, rbp\n\t pop rbp\n\t ret\n");
+
+  return result;
+}
 
 static int compile(UniformCompiler* compiler, UniformAST* tree) {
   int result = 0;
   for (compiler->node_index = 0; compiler->node_index < tree->used; compiler->node_index++) {
-    result = compile_actions[tree->nodes[compiler->node_index]->type](compiler, tree, tree->nodes[compiler->node_index]);
+    result += compile_actions[tree->nodes[compiler->node_index]->type](compiler, tree, tree->nodes[compiler->node_index]);
   }
   return result;
 }

@@ -59,10 +59,25 @@ describe("Compiler Test Suite", compiler_test_suite)
       UniformParserModule.close(expressions_parser);
       UniformPreprocessorModule.close(expressions_preprocessor);
     end
+
+    it("compiles programs")
+      UniformPreprocessor* program_preprocessor = UniformPreprocessorModule.init(SCANNER_LIB, 0);
+      UniformPreprocessorModule.process(program_preprocessor, "modules/compiler/test/files/program.u", NULL);
+      UniformParser* program_parser = UniformParserModule.init(table, program_preprocessor->token_array);
+
+      UniformAST* tree = UniformProgramParser.process(program_parser);
+      int status = UniformCompilerModule.compile(compiler, tree);
+
+      UniformParserModule.close(program_parser);
+      UniformPreprocessorModule.close(program_preprocessor);
+    end
+
   end
 end
 
 int main(void) {
+  UniformLogger.log_level = UNIFORM_LOG_NONE;
+  UniformPreprocessorModule.log_level = UNIFORM_LOG_NONE;
   Awry.run();
   Awry.clear(&Awry);
 

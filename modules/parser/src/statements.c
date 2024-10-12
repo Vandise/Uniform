@@ -67,6 +67,8 @@ static UniformASTNode* assignment_statement(UniformParser* parser, UniformSymbol
   UniformParserModule.next(parser); // T_EQUAL
   UniformParserModule.next(parser);
 
+  t = UniformParserModule.get_token(parser);
+
   data->expressions = UniformParserExpression.process(parser, NULL, context);
 
   if(UniformParserType.assign_compatible(n->type, data->expressions->type)) {

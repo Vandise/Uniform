@@ -56,7 +56,7 @@ static int token_in_list(UNIFORM_TOKEN_CODE code, UNIFORM_TOKEN_CODE token_list[
 
 static void skip_newlines(UniformParser* parser) {
   UniformToken* token = get_token(parser);
-  while(token->code == T_NEWLINE) {
+  while(token != NULL && token->code == T_NEWLINE) {
     next(parser);
     token = get_token(parser);
   }

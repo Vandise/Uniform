@@ -1,0 +1,22 @@
+module Config
+  def get_config() -> Integer do
+    c:Integer = ((-17 + 42) / 4 - 2 * 3) * (9 - 3 + 21)
+  end
+end
+
+module Main
+
+  module SubMain
+    defp process() -> Integer do
+      z:Integer = 0
+    end
+  end
+
+  def main() -> Integer do
+    x:Integer = 10
+
+    y:Integer = 5
+
+
+  end
+end
