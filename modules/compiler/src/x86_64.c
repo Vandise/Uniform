@@ -58,7 +58,7 @@ static void clear_iopt_flag(UniformCompiler* compiler, UNIFORM_IOPT_X86_64_FLAG 
 }
 
 static UniformASTNode* peek_node(UniformAST* tree, int index, int n) {
-  if (index + (n) >= tree->used) {
+  if (index + (n) >= tree->used || (index + (n)) < 0) {
     return NULL;
   }
   return tree->nodes[index + (n)];
