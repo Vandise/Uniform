@@ -135,6 +135,10 @@ static UniformASTNode* function_declaration(UniformParser* parser, UniformASTMod
 
   data->symbol = fnctsymtab;
 
+  // generate label
+  strcpy(fnctsymtab->label, module->symbol->label);
+  strcat(fnctsymtab->label, data->identifier);
+
   // T_DO
   UniformParserModule.next(parser);
   // T_NEWLINE

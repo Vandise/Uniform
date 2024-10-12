@@ -72,6 +72,10 @@ static UniformASTNode* module_definition(UniformParser* parser, UniformASTModule
   if (parent != NULL) {
     UniformSymbolTableNode* parentsym = UniformSymbolTableModule.search_global(parser->symbol_table, parent->identifier);
     symnode->definition.info.module.parent = parentsym;
+    strcpy(symnode->label, parent->identifier);
+    strcat(symnode->label, module->identifier);
+  } else {
+    strcpy(symnode->label, module->identifier);
   }
 
   module->symbol = UniformSymbolTableModule.insert_module(parser->symbol_table, symnode);

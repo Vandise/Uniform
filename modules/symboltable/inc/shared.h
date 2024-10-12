@@ -80,6 +80,7 @@ typedef struct UniformSymbolTableNodeStruct {
   UniformDefinition definition;
   UniformSymbolTableType* type;
 
+  char label[255];
   int level;
   int label_index;
 } UniformSymbolTableNode;
